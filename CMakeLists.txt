@@ -1,0 +1,85 @@
+cmake_minimum_required(VERSION 2.8.12)
+project(ncPong)
+
+option(NCPONG_PREPARE_ANDROID "Prepare the directory to build the Android version of the game" OFF)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+get_filename_component(PARENT_SOURCE_DIR ${CMAKE_SOURCE_DIR} DIRECTORY)
+include(find_ncine)
+
+set(NCPONG_DATA_DIR "${PARENT_SOURCE_DIR}/ncPong-data" CACHE PATH "Set the path to the game data directory")
+if(NOT IS_DIRECTORY ${NCPONG_DATA_DIR})
+	message(WARNING "ncPong data directory not found at: ${NCPONG_DATA_DIR}")
+else()
+	message(STATUS "ncPong data directory: ${NCPONG_DATA_DIR}")
+endif()
+
+include(ncpong_options_presets)
+set(NCPONG_VERSION 1.0.0)
+include(ncpong_installation)
+
+set(SOURCES
+	${NCINE_MAIN_CPP}
+	pong.cpp)
+
+add_executable(pong ${SOURCES})
+target_include_directories(pong PUBLIC ${NCINE_INCLUDE_DIR})
+target_link_libraries(pong ${NCINE_LIBRARY})
+
+if(MSVC)
+	target_compile_options(pong PRIVATE "/wd4251")
+endif()
+
+if(APPLE)
+	file(RELATIVE_PATH RELPATH_TO_LIB ${CMAKE_INSTALL_PREFIX}/${RUNTIME_INSTALL_DESTINATION}/ ${CMAKE_INSTALL_PREFIX}/${LIBRARY_INSTALL_DESTINATION})
+	set_target_properties(pong PROPERTIES INSTALL_RPATH "@executable_path/${RELPATH_TO_LIB}")
+endif()
+
+if(DEFAULT_DATA_DIR_DIST)
+	if(MSVC OR APPLE)
+		# Relative path from tests to data on Windows and OS X, where the user can choose the installation directory
+		file(RELATIVE_PATH NCPONG_DEFAULT_DATA_DIR ${CMAKE_INSTALL_PREFIX}/${RUNTIME_INSTALL_DESTINATION} ${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DESTINATION})
+		set(NCPONG_DEFAULT_DATA_DIR "${NCPONG_DEFAULT_DATA_DIR}/")
+	else()
+		set(NCPONG_DEFAULT_DATA_DIR "${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DESTINATION}/")
+	endif()
+elseif(NOT NCPONG_DEFAULT_DATA_DIR)
+	set(NCPONG_DEFAULT_DATA_DIR "${NCPONG_DATA_DIR}/data/")
+endif()
+
+if(NCPONG_DEFAULT_DATA_DIR)
+	string(LENGTH ${NCPONG_DEFAULT_DATA_DIR} NCPONG_DEFAULT_DATA_DIR_LENGTH)
+	math(EXPR NCPONG_DEFAULT_DATA_DIR_LENGTH "${NCPONG_DEFAULT_DATA_DIR_LENGTH}-1")
+	string(SUBSTRING ${NCPONG_DEFAULT_DATA_DIR} ${NCPONG_DEFAULT_DATA_DIR_LENGTH} 1 NCPONG_DEFAULT_DATA_DIR_LAST_CHAR)
+	if(NOT(NCPONG_DEFAULT_DATA_DIR_LAST_CHAR STREQUAL "/"))
+		string(CONCAT NCPONG_DEFAULT_DATA_DIR ${NCPONG_DEFAULT_DATA_DIR} "/")
+	endif()
+
+	message(STATUS "Default data directory: ${NCPONG_DEFAULT_DATA_DIR}")
+	target_compile_definitions(pong PRIVATE "NCPONG_DEFAULT_DATA_DIR=\"${NCPONG_DEFAULT_DATA_DIR}\"")
+endif()
+
+install(TARGETS pong RUNTIME DESTINATION ${RUNTIME_INSTALL_DESTINATION})
+install(FILES README.md DESTINATION ${README_INSTALL_DESTINATION})
+if(MSVC OR APPLE)
+	install(FILES LICENSE DESTINATION . RENAME LICENSE.txt)
+endif()
+install(DIRECTORY ${NCPONG_DATA_DIR}/data/ DESTINATION ${DATA_INSTALL_DESTINATION})
+install(FILES ${NCPONG_DATA_DIR}/README.md DESTINATION ${DATA_INSTALL_DESTINATION})
+if(IS_DIRECTORY ${NCINE_SHADERS_DIR})
+	install(DIRECTORY ${NCINE_SHADERS_DIR} DESTINATION ${SHADERS_INSTALL_DESTINATION})
+endif()
+
+if(MSVC)
+	if(NOT NCINE_INSTALL_DIR)
+		install(FILES ${NCINE_DLL} DESTINATION ${RUNTIME_INSTALL_DESTINATION})
+	endif()
+
+	install(DIRECTORY ${BINDIR}/ DESTINATION ${RUNTIME_INSTALL_DESTINATION} FILES_MATCHING PATTERN "*.dll")
+elseif(APPLE)
+	install(DIRECTORY ${FRAMEWORKS_DIR}/ DESTINATION ${FRAMEWORKS_INSTALL_DESTINATION})
+	install(FILES ${NCINE_LIBRARY} DESTINATION ${LIBRARY_INSTALL_DESTINATION})
+endif()
+
+include(ncpong_copy_targets)
+include(ncpong_prepare_android)
