@@ -16,16 +16,16 @@
 namespace {
 
 #ifdef __ANDROID__
-const char* TextureFile = "sticks_256.webp";
-const char* FontTextureFile = "DroidSans32_256.webp";
+	const char *TextureFile = "sticks_256.webp";
+	const char *FontTextureFile = "DroidSans32_256.webp";
 #else
-const char* TextureFile = "sticks_256.png";
-const char* FontTextureFile = "DroidSans32_256.png";
+	const char *TextureFile = "sticks_256.png";
+	const char *FontTextureFile = "DroidSans32_256.png";
 #endif
 
 }
 
-nc::IAppEventHandler* createApphandler()
+nc::IAppEventHandler *createApphandler()
 {
 	return new MyEventHandler;
 }
@@ -52,7 +52,7 @@ void MyEventHandler::onInit()
 
 	megaTexture_ = new nc::Texture((nc::IFile::dataPath() + TextureFile).data());
 	font_ = new nc::Font((nc::IFile::dataPath() + FontTextureFile).data(),
-						 (nc::IFile::dataPath() + "DroidSans32_256.fnt").data());
+	                     (nc::IFile::dataPath() + "DroidSans32_256.fnt").data());
 	tickAudioBuffer_ = new nc::AudioBuffer((nc::IFile::dataPath() + "tick.wav").data());
 	outAudioBuffer_ = new nc::AudioBuffer((nc::IFile::dataPath() + "out.wav").data());
 
@@ -66,13 +66,13 @@ void MyEventHandler::onInit()
 	outSound_ = new nc::AudioBufferPlayer(outAudioBuffer_);
 
 	dummy_ = new nc::SceneNode(&rootNode);
-	blueStick_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width()*0.1f, nc::theApplication().height()*0.5f);
+	blueStick_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width() * 0.1f, nc::theApplication().height() * 0.5f);
 	blueStick_->setTexRect(blueStickRect);
 	blueStick_->setSize(stickSize);
-	redStick_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width()*0.9f, nc::theApplication().height()*0.5f);
+	redStick_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width() * 0.9f, nc::theApplication().height() * 0.5f);
 	redStick_->setTexRect(redStickRect);
 	redStick_->setSize(stickSize);
-	ball_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width()*0.5f, nc::theApplication().height()*0.5f);
+	ball_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width() * 0.5f, nc::theApplication().height() * 0.5f);
 	ball_->setTexRect(ballRect);
 	ball_->setScale(0.5f);
 
@@ -131,26 +131,26 @@ void MyEventHandler::onFrameStart()
 	nc::Rectf blueRect = blueStick_->rect();
 	nc::Rectf redRect = redStick_->rect();
 	if (ballRect.x <  blueRect.x + blueRect.w
-		&& ballRect.y+ballRect.h >= blueRect.y && ballRect.y <= blueRect.y+blueRect.h)
+	    && ballRect.y + ballRect.h >= blueRect.y && ballRect.y <= blueRect.y + blueRect.h)
 	{
-		ball_->x = blueRect.x+blueRect.w+ballRect.w;
+		ball_->x = blueRect.x + blueRect.w + ballRect.w;
 		ballVelocity_.x *= -1.0f;
-		ballVelocity_.y = -1.0f * ((blueStick_->y - ball_->y)/static_cast<float>(blueRect.h));
+		ballVelocity_.y = -1.0f * ((blueStick_->y - ball_->y) / static_cast<float>(blueRect.h));
 		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
-	else if (ballRect.x+ballRect.w > redRect.x
-			 && ballRect.y+ballRect.h >= redRect.y && ballRect.y <= redRect.y+redRect.h)
+	else if (ballRect.x + ballRect.w > redRect.x
+	         && ballRect.y + ballRect.h >= redRect.y && ballRect.y <= redRect.y + redRect.h)
 	{
-		ball_->x = redRect.x-ballRect.w;
+		ball_->x = redRect.x - ballRect.w;
 		ballVelocity_.x *= -1.0f;
-		ballVelocity_.y = -1.0f * ((redStick_->y - ball_->y)/float(redRect.h));
+		ballVelocity_.y = -1.0f * ((redStick_->y - ball_->y) / float(redRect.h));
 		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
 
 	// Ball collision with top or bottom
-	if (ballRect.y+ballRect.h > nc::theApplication().height())
+	if (ballRect.y + ballRect.h > nc::theApplication().height())
 	{
 		ball_->y = nc::theApplication().height() - ballRect.h * 0.5f;
 		ballVelocity_.y *= -1.0f;
@@ -178,7 +178,7 @@ void MyEventHandler::onFrameStart()
 		redScore_++;
 		shouldKickOff_ = true;
 	}
-	else if (ballRect.x+ballRect.w > nc::theApplication().width())
+	else if (ballRect.x + ballRect.w > nc::theApplication().width())
 	{
 		particleSys_->emitParticles(30, 1.0f, -ballVelocity_ * 350.0f);
 		outSound_->play();
@@ -223,9 +223,13 @@ void MyEventHandler::onTouchDown(const nc::TouchEvent &event)
 	{
 		shouldKickOff_ = false;
 		if (redScore_ > blueScore_)
+		{
 			ballVelocity_.set(-1.0f, 0.0f);
+		}
 		else
+		{
 			ballVelocity_.set(1.0f, 0.0f);
+		}
 	}
 }
 
