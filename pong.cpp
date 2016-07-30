@@ -23,6 +23,10 @@ namespace {
 	const char *FontTextureFile = "DroidSans32_256.png";
 #endif
 
+const float BallSpeed = 300.0f;
+const float StickSpeed = 100.0f;
+const float LeftStickDeadZone = 7849 / 32767.0f;
+
 }
 
 nc::IAppEventHandler *createApphandler()
@@ -90,6 +94,7 @@ void MyEventHandler::onInit()
 	redScoreText_->setAlignment(nc::TextNode::ALIGN_LEFT);
 
 	shouldKickOff_ = true;
+	joyAxisValue_ = 0.0f;
 
 	particleSys_ = new nc::ParticleSystem(ball_, 50, megaTexture_, particleRect);
 	nc::ColorAffector *colAffector = new nc::ColorAffector();
@@ -102,36 +107,63 @@ void MyEventHandler::onFrameStart()
 {
 	float step = nc::theApplication().interval();
 
+#ifndef __ANDROID__
+	const nc::KeyboardState &keyState = nc::theApplication().inputManager().keyboardState();
+
+	if (keyState.isKeyDown(nc::KEY_UP) || keyState.isKeyDown(nc::KEY_W))
+	{
+		if (shouldKickOff_) { kickOff(); }
+		targetY_ = blueStick_->y + 1.0f;
+	}
+	else if (keyState.isKeyDown(nc::KEY_DOWN)  || keyState.isKeyDown(nc::KEY_S))
+	{
+		if (shouldKickOff_) { kickOff(); }
+		targetY_ = blueStick_->y - 1.0f;
+	}
+#endif
+
+	if (joyAxisValue_ > LeftStickDeadZone)
+	{
+		if (shouldKickOff_) { kickOff(); }
+		targetY_ = blueStick_->y + 1.0f;
+	}
+	else if (joyAxisValue_ < -LeftStickDeadZone)
+	{
+		if (shouldKickOff_) { kickOff(); }
+		targetY_ = blueStick_->y - 1.0f;
+	}
+
 	// Moving the blue stick
 	if (blueStick_->y > targetY_ + 0.5f)
 	{
-		blueStick_->y -= 100.0f * step;
+		blueStick_->y -= StickSpeed * step;
 	}
 	else if (blueStick_->y < targetY_ - 0.5f)
 	{
-		blueStick_->y += 100.0f * step;
+		blueStick_->y += StickSpeed * step;
 	}
 
 	// Moving the red stick
 	if (redStick_->y > ball_->y + 0.5f)
 	{
-		redStick_->y -= 100.0f * step;
+		redStick_->y -= StickSpeed * step;
 	}
 	else if (redStick_->y < ball_->y - 0.5f)
 	{
-		redStick_->y += 100.0f * step;
+		redStick_->y += StickSpeed * step;
 	}
 
 	// Moving the ball
-	ball_->x += ballVelocity_.x * 300.0f * step;
-	ball_->y += ballVelocity_.y * 300.0f * step;
+	ball_->x += ballVelocity_.x * BallSpeed * step;
+	ball_->y += ballVelocity_.y * BallSpeed * step;
 
 	// Checking for ball and sticks collisions
 	nc::Rectf ballRect = ball_->rect();
 	nc::Rectf blueRect = blueStick_->rect();
 	nc::Rectf redRect = redStick_->rect();
-	if (ballRect.x <  blueRect.x + blueRect.w
-	    && ballRect.y + ballRect.h >= blueRect.y && ballRect.y <= blueRect.y + blueRect.h)
+	if (ballRect.x <  blueRect.x + blueRect.w &&
+	    ballRect.y + ballRect.h >= blueRect.y &&
+	    ballRect.y <= blueRect.y + blueRect.h)
 	{
 		ball_->x = blueRect.x + blueRect.w + ballRect.w;
 		ballVelocity_.x *= -1.0f;
@@ -139,8 +171,9 @@ void MyEventHandler::onFrameStart()
 		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
-	else if (ballRect.x + ballRect.w > redRect.x
-	         && ballRect.y + ballRect.h >= redRect.y && ballRect.y <= redRect.y + redRect.h)
+	else if (ballRect.x + ballRect.w > redRect.x &&
+	         ballRect.y + ballRect.h >= redRect.y &&
+	         ballRect.y <= redRect.y + redRect.h)
 	{
 		ball_->x = redRect.x - ballRect.w;
 		ballVelocity_.x *= -1.0f;
@@ -218,19 +251,7 @@ void MyEventHandler::onShutdown()
 void MyEventHandler::onTouchDown(const nc::TouchEvent &event)
 {
 	targetY_ = event.y;
-
-	if (shouldKickOff_)
-	{
-		shouldKickOff_ = false;
-		if (redScore_ > blueScore_)
-		{
-			ballVelocity_.set(-1.0f, 0.0f);
-		}
-		else
-		{
-			ballVelocity_.set(1.0f, 0.0f);
-		}
-	}
+	if (shouldKickOff_) { kickOff(); }
 }
 
 void MyEventHandler::onTouchMove(const nc::TouchEvent &event)
@@ -265,18 +286,7 @@ void MyEventHandler::onMouseButtonPressed(const nc::MouseEvent &event)
 		targetY_ = static_cast<float>(event.y);
 	}
 
-	if (event.isLeftButton() && shouldKickOff_)
-	{
-		shouldKickOff_ = false;
-		if (redScore_ > blueScore_)
-		{
-			ballVelocity_.set(-1.0f, 0.0f);
-		}
-		else
-		{
-			ballVelocity_.set(1.0f, 0.0f);
-		}
-	}
+	if (event.isLeftButton() && shouldKickOff_) { kickOff(); }
 }
 
 void MyEventHandler::onMouseMoved(const nc::MouseState &state)
@@ -299,3 +309,28 @@ void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 	}
 }
 #endif
+
+void MyEventHandler::onJoyAxisMoved(const nc::JoyAxisEvent &event)
+{
+	if (event.joyId == 0 && event.axisId == 1)
+	{
+#ifdef _WIN32
+		joyAxisValue_ = event.normValue;
+#else
+		joyAxisValue_ = -event.normValue;
+#endif
+	}
+}
+
+void MyEventHandler::kickOff()
+{
+	shouldKickOff_ = false;
+	if (redScore_ > blueScore_)
+	{
+		ballVelocity_.set(-1.0f, 0.0f);
+	}
+	else
+	{
+		ballVelocity_.set(1.0f, 0.0f);
+	}
+}

@@ -41,6 +41,7 @@ class MyEventHandler
 	virtual void onMouseButtonPressed(const nc::MouseEvent &event);
 	virtual void onMouseMoved(const nc::MouseState &state);
 #endif
+	virtual void onJoyAxisMoved(const nc::JoyAxisEvent &event);
 
   private:
 	nc::SceneNode *dummy_;
@@ -58,12 +59,15 @@ class MyEventHandler
 	nc::TextNode *redScoreText_;
 	nc::String scoreString_;
 	bool shouldKickOff_;
+	float joyAxisValue_;
 
 	nc::ParticleSystem *particleSys_;
 	nc::AudioBuffer *tickAudioBuffer_;
 	nc::AudioBuffer *outAudioBuffer_;
 	nc::AudioBufferPlayer *tickSound_;
 	nc::AudioBufferPlayer *outSound_;
+
+	void kickOff();
 };
 
 #endif
