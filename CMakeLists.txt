@@ -22,8 +22,23 @@ set(SOURCES
 	${NCINE_MAIN_CPP}
 	pong.cpp)
 
+if(MSVC AND EXISTS ${NCPONG_DATA_DIR}/icons/ncPong.ico)
+	message(STATUS "Writing a resource file for executable icon")
+
+	set(GENERATED_SOURCE_DIR "${CMAKE_BINARY_DIR}/generated")
+	set(GENERATED_INCLUDE_DIR "${GENERATED_SOURCE_DIR}/include")
+
+	set(RESOURCE_RC_FILE "${GENERATED_SOURCE_DIR}/resource.rc")
+	file(WRITE ${RESOURCE_RC_FILE} "IDI_ICON1 ICON DISCARDABLE \"ncPong.ico\"")
+	file(COPY ${NCPONG_DATA_DIR}/icons/ncPong.ico DESTINATION ${GENERATED_INCLUDE_DIR})
+	list(APPEND SOURCES ${RESOURCE_RC_FILE})
+endif()
+
 add_executable(pong ${SOURCES})
 target_include_directories(pong PUBLIC ${NCINE_INCLUDE_DIR})
+if(MSVC AND EXISTS ${NCPONG_DATA_DIR}/icons/ncPong.ico)
+	target_include_directories(pong PRIVATE ${GENERATED_INCLUDE_DIR}) # for the executable icon
+endif()
 target_link_libraries(pong ${NCINE_LIBRARY})
 
 if(MSVC)

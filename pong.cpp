@@ -29,7 +29,7 @@ const float LeftStickDeadZone = 7849 / 32767.0f;
 
 }
 
-nc::IAppEventHandler *createApphandler()
+nc::IAppEventHandler *createAppEventHandler()
 {
 	return new MyEventHandler;
 }
