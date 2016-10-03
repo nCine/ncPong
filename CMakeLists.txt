@@ -15,7 +15,10 @@ else()
 endif()
 
 include(ncpong_options_presets)
-set(NCPONG_VERSION 1.0.0)
+string(TIMESTAMP NCPONG_MAJOR_VERSION "%Y")
+string(TIMESTAMP NCPONG_MINOR_VERSION "%m")
+string(TIMESTAMP NCPONG_PATCH_VERSION "%d")
+set(NCPONG_VERSION "${NCPONG_MAJOR_VERSION}.${NCPONG_MINOR_VERSION}.${NCPONG_PATCH_VERSION}")
 include(ncpong_installation)
 
 set(SOURCES
@@ -34,20 +37,20 @@ if(MSVC AND EXISTS ${NCPONG_DATA_DIR}/icons/ncPong.ico)
 	list(APPEND SOURCES ${RESOURCE_RC_FILE})
 endif()
 
-add_executable(pong ${SOURCES})
-target_include_directories(pong PUBLIC ${NCINE_INCLUDE_DIR})
+add_executable(ncpong ${SOURCES})
+target_include_directories(ncpong PUBLIC ${NCINE_INCLUDE_DIR})
 if(MSVC AND EXISTS ${NCPONG_DATA_DIR}/icons/ncPong.ico)
-	target_include_directories(pong PRIVATE ${GENERATED_INCLUDE_DIR}) # for the executable icon
+	target_include_directories(ncpong PRIVATE ${GENERATED_INCLUDE_DIR}) # for the executable icon
 endif()
-target_link_libraries(pong ${NCINE_LIBRARY})
+target_link_libraries(ncpong ${NCINE_LIBRARY})
 
 if(MSVC)
-	target_compile_options(pong PRIVATE "/wd4251")
+	target_compile_options(ncpong PRIVATE "/wd4251")
 endif()
 
 if(APPLE)
 	file(RELATIVE_PATH RELPATH_TO_LIB ${CMAKE_INSTALL_PREFIX}/${RUNTIME_INSTALL_DESTINATION}/ ${CMAKE_INSTALL_PREFIX}/${LIBRARY_INSTALL_DESTINATION})
-	set_target_properties(pong PROPERTIES INSTALL_RPATH "@executable_path/${RELPATH_TO_LIB}")
+	set_target_properties(ncpong PROPERTIES INSTALL_RPATH "@executable_path/${RELPATH_TO_LIB}")
 endif()
 
 if(DEFAULT_DATA_DIR_DIST)
@@ -71,10 +74,10 @@ if(NCPONG_DEFAULT_DATA_DIR)
 	endif()
 
 	message(STATUS "Default data directory: ${NCPONG_DEFAULT_DATA_DIR}")
-	target_compile_definitions(pong PRIVATE "NCPONG_DEFAULT_DATA_DIR=\"${NCPONG_DEFAULT_DATA_DIR}\"")
+	target_compile_definitions(ncpong PRIVATE "NCPONG_DEFAULT_DATA_DIR=\"${NCPONG_DEFAULT_DATA_DIR}\"")
 endif()
 
-install(TARGETS pong RUNTIME DESTINATION ${RUNTIME_INSTALL_DESTINATION})
+install(TARGETS ncpong RUNTIME DESTINATION ${RUNTIME_INSTALL_DESTINATION})
 install(FILES README.md DESTINATION ${README_INSTALL_DESTINATION})
 if(MSVC OR APPLE)
 	install(FILES LICENSE DESTINATION . RENAME LICENSE.txt)

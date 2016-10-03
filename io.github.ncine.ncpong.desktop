@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=ncPong
+Comment=Example game made with the nCine
+TryExec=ncpong
+Exec=ncpong
+Icon=ncPong
+Terminal=false
+Type=Application
+Categories=Game;
