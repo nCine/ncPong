@@ -1,28 +1,16 @@
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 if(UNIX)
-	add_custom_target(symlink_data ALL
-		COMMAND ${CMAKE_COMMAND} -E create_symlink ${NCPONG_DATA_DIR}/data ${CMAKE_BINARY_DIR}/data
-		COMMENT "Symlinking data..."
-	)
-	set_target_properties(symlink_data PROPERTIES FOLDER "CustomSymlinkTargets")
-
 	if(IS_DIRECTORY ${NCINE_SHADERS_DIR})
 		add_custom_target(symlink_shaders ALL
-			COMMAND ${CMAKE_COMMAND} -E create_symlink ${NCINE_SHADERS_DIR} ${CMAKE_BINARY_DIR}/shaders
+			COMMAND ${CMAKE_COMMAND} -E create_symlink ${NCINE_SHADERS_DIR} ${NCPONG_DEFAULT_DATA_DIR}/shaders
 			COMMENT "Symlinking shaders..."
 		)
 		set_target_properties(symlink_shaders PROPERTIES FOLDER "CustomSymlinkTargets")
 	endif()
 elseif(WIN32)
-	add_custom_target(copy_data ALL
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${NCPONG_DATA_DIR}/data ${CMAKE_BINARY_DIR}/data
-		COMMENT "Copying data..."
-	)
-	set_target_properties(copy_data PROPERTIES FOLDER "CustomCopyTargets")
-
 	if(IS_DIRECTORY ${NCINE_SHADERS_DIR})
 		add_custom_target(copy_shaders ALL
-			COMMAND ${CMAKE_COMMAND} -E copy_directory ${NCINE_SHADERS_DIR} ${CMAKE_BINARY_DIR}/shaders
+			COMMAND ${CMAKE_COMMAND} -E copy_directory ${NCINE_SHADERS_DIR} ${NCPONG_DEFAULT_DATA_DIR}/shaders
 			COMMENT "Copying shaders..."
 		)
 		set_target_properties(copy_shaders PROPERTIES FOLDER "CustomCopyTargets")
