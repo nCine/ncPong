@@ -23,6 +23,7 @@ include(ncpong_installation)
 
 set(SOURCES
 	${NCINE_MAIN_CPP}
+	pong.h
 	pong.cpp)
 
 if(MSVC AND EXISTS ${NCPONG_DATA_DIR}/icons/ncPong.ico)

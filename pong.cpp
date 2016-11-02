@@ -39,6 +39,8 @@ void MyEventHandler::onPreInit(nc::AppConfiguration &config)
 	config.enableProfilerGraphs(false);
 	config.enableProfilerText(false);
 	config.enableThreads(false);
+
+	config.setWindowTitle("ncPong");
 #ifdef __ANDROID__
 	config.setDataPath("asset::");
 #else
