@@ -252,15 +252,15 @@ void MyEventHandler::onShutdown()
 #ifdef __ANDROID__
 void MyEventHandler::onTouchDown(const nc::TouchEvent &event)
 {
-	targetY_ = event.y;
+	targetY_ = event.pointers[0].y;
 	if (shouldKickOff_) { kickOff(); }
 }
 
 void MyEventHandler::onTouchMove(const nc::TouchEvent &event)
 {
-	if (abs(targetY_ - event.y) > 3.0f)
+	if (abs(targetY_ - event.pointers[0].y) > 3.0f)
 	{
-		targetY_ = event.y;
+		targetY_ = event.pointers[0].y;
 	}
 }
 
