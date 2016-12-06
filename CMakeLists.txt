@@ -38,6 +38,9 @@ if(MSVC AND EXISTS ${NCPONG_DATA_DIR}/icons/ncPong.ico)
 	list(APPEND SOURCES ${RESOURCE_RC_FILE})
 endif()
 
+if(NOT DEFAULT_DATA_DIR_DIST) # Don't set the startup project if it wouldn't find the data directory
+	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ncpong)
+endif()
 add_executable(ncpong ${SOURCES})
 target_include_directories(ncpong PUBLIC ${NCINE_INCLUDE_DIR})
 if(MSVC AND EXISTS ${NCPONG_DATA_DIR}/icons/ncPong.ico)

@@ -27,6 +27,12 @@ if(MSVC)
 	set(CPACK_GENERATOR NSIS ZIP)
 	set(CPACK_NSIS_MUI_ICON "${NCPONG_DATA_DIR}/icons/ncPong.ico")
 	set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
+	# Custom NSIS commands needed in order to set the "Start in" property of the start menu shortcut
+	set(CPACK_NSIS_CREATE_ICONS_EXTRA
+		"SetOutPath '$INSTDIR\\\\bin'
+		CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\ncPong.lnk' '$INSTDIR\\\\bin\\\\ncpong.exe'
+		SetOutPath '$INSTDIR'")
+	set(CPACK_NSIS_DELETE_ICONS_EXTRA "Delete '$SMPROGRAMS\\\\$MUI_TEMP\\\\ncPong.lnk'")
 elseif(APPLE)
 	set(CPACK_GENERATOR "Bundle")
 	set(CPACK_BUNDLE_NAME ncPong)
