@@ -1,16 +1,16 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
-    }
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:2.2.+'
+	}
 }
 
 apply plugin: 'com.android.application'
- 
+
 android {
 
 	def numCores = Runtime.runtime.availableProcessors()
@@ -22,16 +22,16 @@ android {
 		ndkCommand = 'ndk-build'
 	}
 
+	buildToolsVersion "@NCPONG_BUILDTOOLS_VERSION@"
 	compileSdkVersion @NCPONG_COMPILESDK_VERSION@
-	buildToolsVersion "25.0.0"
- 
+
 	defaultConfig {
 		minSdkVersion @NCPONG_MINSDK_VERSION@
 		targetSdkVersion @NCPONG_TARGETSDK_VERSION@
-		versionCode 1
+		versionCode @NCPONG_VERSIONCODE@
 		versionName "@NCPONG_VERSION@"
 	}
- 
+
 	sourceSets.main {
 		jniLibs.srcDir 'src/main/libs'
 		jni.srcDirs = [] // disable automatic ndk-build call
