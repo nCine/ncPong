@@ -15,10 +15,7 @@ else()
 endif()
 
 include(ncpong_options_presets)
-string(TIMESTAMP NCPONG_MAJOR_VERSION "%Y")
-string(TIMESTAMP NCPONG_MINOR_VERSION "%m")
-string(TIMESTAMP NCPONG_PATCH_VERSION "%d")
-set(NCPONG_VERSION "${NCPONG_MAJOR_VERSION}.${NCPONG_MINOR_VERSION}.${NCPONG_PATCH_VERSION}")
+include(ncpong_get_version)
 include(ncpong_installation)
 
 set(SOURCES

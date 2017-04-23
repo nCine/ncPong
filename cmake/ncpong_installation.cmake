@@ -63,6 +63,7 @@ elseif(APPLE)
 	add_custom_target(iconutil_convert ALL DEPENDS ${CMAKE_BINARY_DIR}/${CPACK_BUNDLE_NAME}.iconset)
 	set(CPACK_BUNDLE_ICON ${CMAKE_BINARY_DIR}/${CPACK_BUNDLE_NAME}.icns)
 elseif(UNIX AND NOT APPLE)
+	set(CPACK_GENERATOR TGZ)
 	set(ICONS_INSTALL_DESTINATION share/icons/hicolor)
 
 	if(EXISTS ${NCPONG_DATA_DIR}/icons)
@@ -74,6 +75,8 @@ elseif(UNIX AND NOT APPLE)
 	endif()
 
 	install(FILES ${CMAKE_SOURCE_DIR}/io.github.ncine.ncpong.desktop DESTINATION share/applications)
+elseif(MINGW)
+	set(CPACK_GENERATOR TGZ)
 endif()
 
 include(CPack)
