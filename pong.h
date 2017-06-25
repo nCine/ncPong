@@ -33,14 +33,13 @@ class MyEventHandler
 	virtual void onFrameStart();
 	virtual void onShutdown();
 
-	virtual void onKeyReleased(const nc::KeyboardEvent &event);
 #ifdef __ANDROID__
 	virtual void onTouchDown(const nc::TouchEvent &event);
 	virtual void onTouchMove(const nc::TouchEvent &event);
-#else
+#endif
+	virtual void onKeyReleased(const nc::KeyboardEvent &event);
 	virtual void onMouseButtonPressed(const nc::MouseEvent &event);
 	virtual void onMouseMoved(const nc::MouseState &state);
-#endif
 	virtual void onJoyAxisMoved(const nc::JoyAxisEvent &event);
 
   private:

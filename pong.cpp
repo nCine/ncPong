@@ -5,7 +5,6 @@
 #include "AppConfiguration.h"
 #include "SceneNode.h"
 #include "Texture.h"
-#include "Font.h"
 #include "Sprite.h"
 #include "TextNode.h"
 #include "ParticleSystem.h"
@@ -109,7 +108,6 @@ void MyEventHandler::onFrameStart()
 {
 	float step = nc::theApplication().interval();
 
-#ifndef __ANDROID__
 	const nc::KeyboardState &keyState = nc::theApplication().inputManager().keyboardState();
 
 	if (keyState.isKeyDown(nc::KEY_UP) || keyState.isKeyDown(nc::KEY_W))
@@ -122,7 +120,6 @@ void MyEventHandler::onFrameStart()
 		if (shouldKickOff_) { kickOff(); }
 		targetY_ = blueStick_->y - 1.0f;
 	}
-#endif
 
 	if (joyAxisValue_ > LeftStickDeadZone)
 	{
@@ -160,16 +157,16 @@ void MyEventHandler::onFrameStart()
 	ball_->y += ballVelocity_.y * BallSpeed * step;
 
 	// Checking for ball and sticks collisions
-	nc::Rectf ballRect = ball_->rect();
-	nc::Rectf blueRect = blueStick_->rect();
-	nc::Rectf redRect = redStick_->rect();
+	nc::Rectf ballRect = nc::Rectf::fromCenterAndSize(ball_->position(), ball_->size());
+	nc::Rectf blueRect = nc::Rectf::fromCenterAndSize(blueStick_->position(), blueStick_->size());
+	nc::Rectf redRect = nc::Rectf::fromCenterAndSize(redStick_->position(), redStick_->size());
 	if (ballRect.x <  blueRect.x + blueRect.w &&
 	    ballRect.y + ballRect.h >= blueRect.y &&
 	    ballRect.y <= blueRect.y + blueRect.h)
 	{
 		ball_->x = blueRect.x + blueRect.w + ballRect.w;
 		ballVelocity_.x *= -1.0f;
-		ballVelocity_.y = -1.0f * ((blueStick_->y - ball_->y) / static_cast<float>(blueRect.h));
+		ballVelocity_.y = -1.0f * ((blueStick_->y - ball_->y) / blueRect.h);
 		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
@@ -179,7 +176,7 @@ void MyEventHandler::onFrameStart()
 	{
 		ball_->x = redRect.x - ballRect.w;
 		ballVelocity_.x *= -1.0f;
-		ballVelocity_.y = -1.0f * ((redStick_->y - ball_->y) / float(redRect.h));
+		ballVelocity_.y = -1.0f * ((redStick_->y - ball_->y) / redRect.h);
 		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
@@ -230,12 +227,12 @@ void MyEventHandler::onFrameStart()
 	scoreString_.clear();
 	scoreString_.format(static_cast<const char *>("Blue: %d"), blueScore_);
 	blueScoreText_->setString(scoreString_);
-	blueScoreText_->setPosition(0.0f, static_cast<float>(nc::theApplication().height()));
+	blueScoreText_->setPosition(blueScoreText_->width() * 0.5f, nc::theApplication().height() - blueScoreText_->height() * 0.5f);
 
 	scoreString_.clear();
 	scoreString_.format(static_cast<const char *>("Red: %d"), redScore_);
 	redScoreText_->setString(scoreString_);
-	redScoreText_->setPosition(static_cast<float>(nc::theApplication().width() - blueScoreText_->width()), static_cast<float>(nc::theApplication().height()));
+	redScoreText_->setPosition(nc::theApplication().width() - redScoreText_->width() * 0.5f, nc::theApplication().height() - redScoreText_->height() * 0.5f);
 }
 
 void MyEventHandler::onShutdown()
@@ -263,9 +260,11 @@ void MyEventHandler::onTouchMove(const nc::TouchEvent &event)
 		targetY_ = event.pointers[0].y;
 	}
 }
+#endif
 
 void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 {
+#ifdef __ANDROID__
 	if (event.sym == nc::KEY_VOLUME_UP || event.sym == nc::KEY_VOLUME_DOWN)
 	{
 		float volume = nc::theServiceLocator().audioDevice().gain();
@@ -279,8 +278,18 @@ void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 		}
 		nc::theServiceLocator().audioDevice().setGain(volume);
 	}
+	else
+#endif
+	if (event.sym == nc::KEY_ESCAPE || event.sym == nc::KEY_Q)
+	{
+		nc::theApplication().quit();
+	}
+	else if (event.sym == nc::KEY_SPACE)
+	{
+		nc::theApplication().togglePause();
+	}
 }
-#else
+
 void MyEventHandler::onMouseButtonPressed(const nc::MouseEvent &event)
 {
 	if (event.isLeftButton())
@@ -298,19 +307,6 @@ void MyEventHandler::onMouseMoved(const nc::MouseState &state)
 		targetY_ = static_cast<float>(state.y);
 	}
 }
-
-void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
-{
-	if (event.sym == nc::KEY_ESCAPE || event.sym == nc::KEY_Q)
-	{
-		nc::theApplication().quit();
-	}
-	else if (event.sym == nc::KEY_SPACE)
-	{
-		nc::theApplication().togglePause();
-	}
-}
-#endif
 
 void MyEventHandler::onJoyAxisMoved(const nc::JoyAxisEvent &event)
 {
