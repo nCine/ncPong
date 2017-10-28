@@ -1,20 +1,18 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(ncPong)
 
-option(NCPONG_PREPARE_ANDROID "Prepare the directory to build the Android version of the game" OFF)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 get_filename_component(PARENT_SOURCE_DIR ${CMAKE_SOURCE_DIR} DIRECTORY)
+include(ncpong_options)
+
 include(find_ncine)
 
-set(NCPONG_DATA_DIR "${PARENT_SOURCE_DIR}/ncPong-data" CACHE PATH "Set the path to the game data directory")
 if(NOT IS_DIRECTORY ${NCPONG_DATA_DIR})
 	message(WARNING "ncPong data directory not found at: ${NCPONG_DATA_DIR}")
 else()
 	message(STATUS "ncPong data directory: ${NCPONG_DATA_DIR}")
 endif()
 
-include(ncpong_options_presets)
 include(ncpong_get_version)
 include(ncpong_installation)
 
@@ -101,4 +99,4 @@ elseif(APPLE)
 endif()
 
 include(ncpong_copy_targets)
-include(ncpong_prepare_android)
+include(ncpong_build_android)
