@@ -49,6 +49,7 @@ void MyEventHandler::onPreInit(nc::AppConfiguration &config)
 	config.setDataPath("data/");
 	#endif
 #endif
+	config.setWindowIconFilename("icon48.png");
 }
 
 void MyEventHandler::onInit()
@@ -164,43 +165,43 @@ void MyEventHandler::onFrameStart()
 	    ballRect.y + ballRect.h >= blueRect.y &&
 	    ballRect.y <= blueRect.y + blueRect.h)
 	{
+		particleSys_->emitParticles(10, 0.25f, ballVelocity_ * 250.0f);
 		ball_->x = blueRect.x + blueRect.w + ballRect.w;
 		ballVelocity_.x *= -1.0f;
 		ballVelocity_.y = -1.0f * ((blueStick_->y - ball_->y) / blueRect.h);
-		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
 	else if (ballRect.x + ballRect.w > redRect.x &&
 	         ballRect.y + ballRect.h >= redRect.y &&
 	         ballRect.y <= redRect.y + redRect.h)
 	{
+		particleSys_->emitParticles(10, 0.25f, ballVelocity_ * 250.0f);
 		ball_->x = redRect.x - ballRect.w;
 		ballVelocity_.x *= -1.0f;
 		ballVelocity_.y = -1.0f * ((redStick_->y - ball_->y) / redRect.h);
-		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
 
 	// Ball collision with top or bottom
 	if (ballRect.y + ballRect.h > nc::theApplication().height())
 	{
+		particleSys_->emitParticles(10, 0.2f, ballVelocity_ * 250.0f);
 		ball_->y = nc::theApplication().height() - ballRect.h * 0.5f;
 		ballVelocity_.y *= -1.0f;
-		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
 	else if (ballRect.y < 0)
 	{
+		particleSys_->emitParticles(10, 0.2f, ballVelocity_ * 250.0f);
 		ball_->y = ballRect.h * 0.5f;
 		ballVelocity_.y *= -1.0f;
-		particleSys_->emitParticles(10, 0.2f, -ballVelocity_ * 250.0f);
 		tickSound_->play();
 	}
 
 	// Scoring
 	if (ballRect.x <= 0)
 	{
-		particleSys_->emitParticles(30, 1.0f, -ballVelocity_ * 350.0f);
+		particleSys_->emitParticles(30, 1.0f, ballVelocity_ * 350.0f);
 		outSound_->play();
 		blueStick_->y = nc::theApplication().height() * 0.5f;
 		redStick_->y = nc::theApplication().height() * 0.5f;
@@ -212,7 +213,7 @@ void MyEventHandler::onFrameStart()
 	}
 	else if (ballRect.x + ballRect.w > nc::theApplication().width())
 	{
-		particleSys_->emitParticles(30, 1.0f, -ballVelocity_ * 350.0f);
+		particleSys_->emitParticles(30, 1.0f, ballVelocity_ * 350.0f);
 		outSound_->play();
 		blueStick_->y = nc::theApplication().height() * 0.5f;
 		redStick_->y = nc::theApplication().height() * 0.5f;
@@ -308,15 +309,11 @@ void MyEventHandler::onMouseMoved(const nc::MouseState &state)
 	}
 }
 
-void MyEventHandler::onJoyAxisMoved(const nc::JoyAxisEvent &event)
+void MyEventHandler::onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event)
 {
-	if (event.joyId == 0 && event.axisId == 1)
+	if (event.axisName == nc::AXIS_LY)
 	{
-#ifdef _WIN32
-		joyAxisValue_ = event.normValue;
-#else
-		joyAxisValue_ = -event.normValue;
-#endif
+		joyAxisValue_ = event.value;
 	}
 }
 

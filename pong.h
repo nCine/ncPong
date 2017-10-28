@@ -40,7 +40,7 @@ class MyEventHandler
 	virtual void onKeyReleased(const nc::KeyboardEvent &event);
 	virtual void onMouseButtonPressed(const nc::MouseEvent &event);
 	virtual void onMouseMoved(const nc::MouseState &state);
-	virtual void onJoyAxisMoved(const nc::JoyAxisEvent &event);
+	virtual void onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event);
 
   private:
 	nc::SceneNode *dummy_;
