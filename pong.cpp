@@ -15,11 +15,11 @@
 namespace {
 
 #ifdef __ANDROID__
-	const char *TextureFile = "sticks_256.webp";
-	const char *FontTextureFile = "DroidSans32_256.webp";
+const char *TextureFile = "sticks_256.webp";
+const char *FontTextureFile = "DroidSans32_256.webp";
 #else
-	const char *TextureFile = "sticks_256.png";
-	const char *FontTextureFile = "DroidSans32_256.png";
+const char *TextureFile = "sticks_256.png";
+const char *FontTextureFile = "DroidSans32_256.png";
 #endif
 
 const float BallSpeed = 300.0f;
@@ -113,45 +113,41 @@ void MyEventHandler::onFrameStart()
 
 	if (keyState.isKeyDown(nc::KEY_UP) || keyState.isKeyDown(nc::KEY_W))
 	{
-		if (shouldKickOff_) { kickOff(); }
+		if (shouldKickOff_)
+			kickOff();
 		targetY_ = blueStick_->y + 1.0f;
 	}
 	else if (keyState.isKeyDown(nc::KEY_DOWN)  || keyState.isKeyDown(nc::KEY_S))
 	{
-		if (shouldKickOff_) { kickOff(); }
+		if (shouldKickOff_)
+			kickOff();
 		targetY_ = blueStick_->y - 1.0f;
 	}
 
 	if (joyAxisValue_ > LeftStickDeadZone)
 	{
-		if (shouldKickOff_) { kickOff(); }
+		if (shouldKickOff_)
+			kickOff();
 		targetY_ = blueStick_->y + 1.0f;
 	}
 	else if (joyAxisValue_ < -LeftStickDeadZone)
 	{
-		if (shouldKickOff_) { kickOff(); }
+		if (shouldKickOff_)
+			kickOff();
 		targetY_ = blueStick_->y - 1.0f;
 	}
 
 	// Moving the blue stick
 	if (blueStick_->y > targetY_ + 0.5f)
-	{
 		blueStick_->y -= StickSpeed * step;
-	}
 	else if (blueStick_->y < targetY_ - 0.5f)
-	{
 		blueStick_->y += StickSpeed * step;
-	}
 
 	// Moving the red stick
 	if (redStick_->y > ball_->y + 0.5f)
-	{
 		redStick_->y -= StickSpeed * step;
-	}
 	else if (redStick_->y < ball_->y - 0.5f)
-	{
 		redStick_->y += StickSpeed * step;
-	}
 
 	// Moving the ball
 	ball_->x += ballVelocity_.x * BallSpeed * step;
@@ -251,15 +247,14 @@ void MyEventHandler::onShutdown()
 void MyEventHandler::onTouchDown(const nc::TouchEvent &event)
 {
 	targetY_ = event.pointers[0].y;
-	if (shouldKickOff_) { kickOff(); }
+	if (shouldKickOff_)
+		kickOff();
 }
 
 void MyEventHandler::onTouchMove(const nc::TouchEvent &event)
 {
 	if (abs(targetY_ - event.pointers[0].y) > 3.0f)
-	{
 		targetY_ = event.pointers[0].y;
-	}
 }
 #endif
 
@@ -269,63 +264,49 @@ void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 	if (event.sym == nc::KEY_VOLUME_UP || event.sym == nc::KEY_VOLUME_DOWN)
 	{
 		float volume = nc::theServiceLocator().audioDevice().gain();
+
 		if (event.sym == nc::KEY_VOLUME_UP && volume <= 0.9f)
-		{
 			volume += 0.1f;
-		}
 		else if (event.sym == nc::KEY_VOLUME_DOWN && volume >= 0.1f)
-		{
 			volume -= 0.1f;
-		}
+
 		nc::theServiceLocator().audioDevice().setGain(volume);
 	}
 	else
 #endif
 	if (event.sym == nc::KEY_ESCAPE || event.sym == nc::KEY_Q)
-	{
 		nc::theApplication().quit();
-	}
 	else if (event.sym == nc::KEY_SPACE)
-	{
 		nc::theApplication().togglePause();
-	}
 }
 
 void MyEventHandler::onMouseButtonPressed(const nc::MouseEvent &event)
 {
 	if (event.isLeftButton())
-	{
 		targetY_ = static_cast<float>(event.y);
-	}
 
-	if (event.isLeftButton() && shouldKickOff_) { kickOff(); }
+	if (event.isLeftButton() && shouldKickOff_)
+		kickOff();
 }
 
 void MyEventHandler::onMouseMoved(const nc::MouseState &state)
 {
 	if (state.isLeftButtonDown())
-	{
 		targetY_ = static_cast<float>(state.y);
-	}
 }
 
 void MyEventHandler::onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event)
 {
 	if (event.axisName == nc::AXIS_LY)
-	{
 		joyAxisValue_ = event.value;
-	}
 }
 
 void MyEventHandler::kickOff()
 {
 	shouldKickOff_ = false;
+
 	if (redScore_ > blueScore_)
-	{
 		ballVelocity_.set(-1.0f, 0.0f);
-	}
 	else
-	{
 		ballVelocity_.set(1.0f, 0.0f);
-	}
 }
