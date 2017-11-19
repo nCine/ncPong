@@ -62,11 +62,11 @@ void MyEventHandler::onInit()
 	tickAudioBuffer_ = new nc::AudioBuffer((nc::IFile::dataPath() + "tick.wav").data());
 	outAudioBuffer_ = new nc::AudioBuffer((nc::IFile::dataPath() + "out.wav").data());
 
-	nc::Recti blueStickRect(24, 22, 54, 212);
-	nc::Recti redStickRect(174, 22, 56, 212);
-	nc::Recti ballRect(92, 92, 72, 72);
-	nc::Recti particleRect(116, 23, 23, 35);
-	nc::Vector2f stickSize(30.0f, 200.0f);
+	const nc::Recti blueStickRect(24, 22, 54, 212);
+	const nc::Recti redStickRect(174, 22, 56, 212);
+	const nc::Recti ballRect(92, 92, 72, 72);
+	const nc::Recti particleRect(116, 23, 23, 35);
+	const nc::Vector2f stickSize(30.0f, 200.0f);
 
 	tickSound_ = new nc::AudioBufferPlayer(tickAudioBuffer_);
 	outSound_ = new nc::AudioBufferPlayer(outAudioBuffer_);
@@ -107,7 +107,7 @@ void MyEventHandler::onInit()
 
 void MyEventHandler::onFrameStart()
 {
-	float step = nc::theApplication().interval();
+	const float step = nc::theApplication().interval();
 
 	const nc::KeyboardState &keyState = nc::theApplication().inputManager().keyboardState();
 
@@ -154,9 +154,9 @@ void MyEventHandler::onFrameStart()
 	ball_->y += ballVelocity_.y * BallSpeed * step;
 
 	// Checking for ball and sticks collisions
-	nc::Rectf ballRect = nc::Rectf::fromCenterAndSize(ball_->position(), ball_->size());
-	nc::Rectf blueRect = nc::Rectf::fromCenterAndSize(blueStick_->position(), blueStick_->size());
-	nc::Rectf redRect = nc::Rectf::fromCenterAndSize(redStick_->position(), redStick_->size());
+	const nc::Rectf ballRect = nc::Rectf::fromCenterAndSize(ball_->position(), ball_->size());
+	const nc::Rectf blueRect = nc::Rectf::fromCenterAndSize(blueStick_->position(), blueStick_->size());
+	const nc::Rectf redRect = nc::Rectf::fromCenterAndSize(redStick_->position(), redStick_->size());
 	if (ballRect.x <  blueRect.x + blueRect.w &&
 	    ballRect.y + ballRect.h >= blueRect.y &&
 	    ballRect.y <= blueRect.y + blueRect.h)
