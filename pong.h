@@ -4,7 +4,8 @@
 #include "IAppEventHandler.h"
 #include "IInputEventHandler.h"
 #include "Vector2.h"
-#include "ncString.h"
+#include "nctl/String.h"
+#include "nctl/UniquePtr.h"
 
 namespace ncine {
 
@@ -28,43 +29,42 @@ class MyEventHandler :
 	public nc::IInputEventHandler
 {
   public:
-	virtual void onPreInit(nc::AppConfiguration &config);
-	virtual void onInit();
-	virtual void onFrameStart();
-	virtual void onShutdown();
+	void onPreInit(nc::AppConfiguration &config) override;
+	void onInit() override;
+	void onFrameStart() override;
 
 #ifdef __ANDROID__
-	virtual void onTouchDown(const nc::TouchEvent &event);
-	virtual void onTouchMove(const nc::TouchEvent &event);
+	virtual void onTouchDown(const nc::TouchEvent &event) override;
+	virtual void onTouchMove(const nc::TouchEvent &event) override;
 #endif
-	virtual void onKeyReleased(const nc::KeyboardEvent &event);
-	virtual void onMouseButtonPressed(const nc::MouseEvent &event);
-	virtual void onMouseMoved(const nc::MouseState &state);
-	virtual void onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event);
+	void onKeyReleased(const nc::KeyboardEvent &event) override;
+	void onMouseButtonPressed(const nc::MouseEvent &event) override;
+	void onMouseMoved(const nc::MouseState &state) override;
+	void onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event) override;
 
   private:
-	nc::SceneNode *dummy_;
-	nc::Texture *megaTexture_;
-	nc::Font *font_;
-	nc::Sprite *blueStick_;
-	nc::Sprite *redStick_;
-	nc::Sprite *ball_;
+	nctl::UniquePtr<nc::Texture> megaTexture_;
+	nctl::UniquePtr<nc::Font> font_;
+	nctl::UniquePtr<nc::SceneNode> dummy_;
+	nctl::UniquePtr<nc::Sprite> blueStick_;
+	nctl::UniquePtr<nc::Sprite> redStick_;
+	nctl::UniquePtr<nc::Sprite> ball_;
 
 	float targetY_;
 	nc::Vector2f ballVelocity_;
 	int blueScore_;
 	int redScore_;
-	nc::TextNode *blueScoreText_;
-	nc::TextNode *redScoreText_;
-	nc::String scoreString_;
+	nctl::UniquePtr<nc::TextNode> blueScoreText_;
+	nctl::UniquePtr<nc::TextNode> redScoreText_;
+	nctl::String scoreString_;
 	bool shouldKickOff_;
 	float joyAxisValue_;
 
-	nc::ParticleSystem *particleSys_;
-	nc::AudioBuffer *tickAudioBuffer_;
-	nc::AudioBuffer *outAudioBuffer_;
-	nc::AudioBufferPlayer *tickSound_;
-	nc::AudioBufferPlayer *outSound_;
+	nctl::UniquePtr<nc::ParticleSystem> particleSys_;
+	nctl::UniquePtr<nc::AudioBuffer> tickAudioBuffer_;
+	nctl::UniquePtr<nc::AudioBuffer> outAudioBuffer_;
+	nctl::UniquePtr<nc::AudioBufferPlayer> tickSound_;
+	nctl::UniquePtr<nc::AudioBufferPlayer> outSound_;
 
 	void kickOff();
 };

@@ -56,11 +56,11 @@ void MyEventHandler::onInit()
 {
 	nc::SceneNode &rootNode = nc::theApplication().rootNode();
 
-	megaTexture_ = new nc::Texture((nc::IFile::dataPath() + TextureFile).data());
-	font_ = new nc::Font((nc::IFile::dataPath() + FontTextureFile).data(),
-	                     (nc::IFile::dataPath() + "DroidSans32_256.fnt").data());
-	tickAudioBuffer_ = new nc::AudioBuffer((nc::IFile::dataPath() + "tick.wav").data());
-	outAudioBuffer_ = new nc::AudioBuffer((nc::IFile::dataPath() + "out.wav").data());
+	megaTexture_ = nctl::makeUnique<nc::Texture>((nc::IFile::dataPath() + TextureFile).data());
+	font_ = nctl::makeUnique<nc::Font>((nc::IFile::dataPath() + FontTextureFile).data(),
+	                                   (nc::IFile::dataPath() + "DroidSans32_256.fnt").data());
+	tickAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "tick.wav").data());
+	outAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "out.wav").data());
 
 	const nc::Recti blueStickRect(24, 22, 54, 212);
 	const nc::Recti redStickRect(174, 22, 56, 212);
@@ -68,17 +68,17 @@ void MyEventHandler::onInit()
 	const nc::Recti particleRect(116, 23, 23, 35);
 	const nc::Vector2f stickSize(30.0f, 200.0f);
 
-	tickSound_ = new nc::AudioBufferPlayer(tickAudioBuffer_);
-	outSound_ = new nc::AudioBufferPlayer(outAudioBuffer_);
+	tickSound_ = nctl::makeUnique<nc::AudioBufferPlayer>(tickAudioBuffer_.get());
+	outSound_ = nctl::makeUnique<nc::AudioBufferPlayer>(outAudioBuffer_.get());
 
-	dummy_ = new nc::SceneNode(&rootNode);
-	blueStick_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width() * 0.1f, nc::theApplication().height() * 0.5f);
+	dummy_ = nctl::makeUnique<nc::SceneNode>(&rootNode);
+	blueStick_ = nctl::makeUnique<nc::Sprite>(dummy_.get(), megaTexture_.get(), nc::theApplication().width() * 0.1f, nc::theApplication().height() * 0.5f);
 	blueStick_->setTexRect(blueStickRect);
 	blueStick_->setSize(stickSize);
-	redStick_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width() * 0.9f, nc::theApplication().height() * 0.5f);
+	redStick_ = nctl::makeUnique<nc::Sprite>(dummy_.get(), megaTexture_.get(), nc::theApplication().width() * 0.9f, nc::theApplication().height() * 0.5f);
 	redStick_->setTexRect(redStickRect);
 	redStick_->setSize(stickSize);
-	ball_ = new nc::Sprite(dummy_, megaTexture_, nc::theApplication().width() * 0.5f, nc::theApplication().height() * 0.5f);
+	ball_ = nctl::makeUnique<nc::Sprite>(dummy_.get(), megaTexture_.get(), nc::theApplication().width() * 0.5f, nc::theApplication().height() * 0.5f);
 	ball_->setTexRect(ballRect);
 	ball_->setScale(0.5f);
 
@@ -86,23 +86,23 @@ void MyEventHandler::onInit()
 	ballVelocity_.set(0.0f, 0.0f);
 
 	blueScore_ = 0;
-	blueScoreText_ = new nc::TextNode(dummy_, font_);
+	blueScoreText_ = nctl::makeUnique<nc::TextNode>(dummy_.get(), font_.get());
 	blueScoreText_->setColor(126, 148, 164, 225);
-	blueScoreText_->setAlignment(nc::TextNode::ALIGN_RIGHT);
+	blueScoreText_->setAlignment(nc::TextNode::Alignment::RIGHT);
 
 	redScore_ = 0;
-	redScoreText_ = new nc::TextNode(dummy_, font_);
+	redScoreText_ = nctl::makeUnique<nc::TextNode>(dummy_.get(), font_.get());
 	redScoreText_->setColor(170, 135, 181, 225);
-	redScoreText_->setAlignment(nc::TextNode::ALIGN_LEFT);
+	redScoreText_->setAlignment(nc::TextNode:: Alignment::LEFT);
 
 	shouldKickOff_ = true;
 	joyAxisValue_ = 0.0f;
 
-	particleSys_ = new nc::ParticleSystem(ball_, 50, megaTexture_, particleRect);
-	nc::ColorAffector *colAffector = new nc::ColorAffector();
+	particleSys_ = nctl::makeUnique<nc::ParticleSystem>(ball_.get(), 50, megaTexture_.get(), particleRect);
+	nctl::UniquePtr<nc::ColorAffector> colAffector = nctl::makeUnique<nc::ColorAffector>();
 	colAffector->addColorStep(0.0f, nc::Color(255U, 255U, 255U, 0U));
 	colAffector->addColorStep(1.0f, nc::Color(255U, 255U, 255U, 255U));
-	particleSys_->addAffector(colAffector);
+	particleSys_->addAffector(nctl::move(colAffector));
 }
 
 void MyEventHandler::onFrameStart()
@@ -111,13 +111,13 @@ void MyEventHandler::onFrameStart()
 
 	const nc::KeyboardState &keyState = nc::theApplication().inputManager().keyboardState();
 
-	if (keyState.isKeyDown(nc::KEY_UP) || keyState.isKeyDown(nc::KEY_W))
+	if (keyState.isKeyDown(nc::KeySym::UP) || keyState.isKeyDown(nc::KeySym::W))
 	{
 		if (shouldKickOff_)
 			kickOff();
 		targetY_ = blueStick_->y + 1.0f;
 	}
-	else if (keyState.isKeyDown(nc::KEY_DOWN)  || keyState.isKeyDown(nc::KEY_S))
+	else if (keyState.isKeyDown(nc::KeySym::DOWN)  || keyState.isKeyDown(nc::KeySym::S))
 	{
 		if (shouldKickOff_)
 			kickOff();
@@ -232,17 +232,6 @@ void MyEventHandler::onFrameStart()
 	redScoreText_->setPosition(nc::theApplication().width() - redScoreText_->width() * 0.5f, nc::theApplication().height() - redScoreText_->height() * 0.5f);
 }
 
-void MyEventHandler::onShutdown()
-{
-	delete dummy_; // and all its children
-	delete tickSound_;
-	delete outSound_;
-	delete tickAudioBuffer_;
-	delete outAudioBuffer_;
-	delete font_;
-	delete megaTexture_;
-}
-
 #ifdef __ANDROID__
 void MyEventHandler::onTouchDown(const nc::TouchEvent &event)
 {
@@ -274,9 +263,9 @@ void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 	}
 	else
 #endif
-	if (event.sym == nc::KEY_ESCAPE || event.sym == nc::KEY_Q)
+	if (event.sym == nc::KeySym::ESCAPE || event.sym == nc::KeySym::Q)
 		nc::theApplication().quit();
-	else if (event.sym == nc::KEY_SPACE)
+	else if (event.sym == nc::KeySym::SPACE)
 		nc::theApplication().togglePause();
 }
 
@@ -297,7 +286,7 @@ void MyEventHandler::onMouseMoved(const nc::MouseState &state)
 
 void MyEventHandler::onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event)
 {
-	if (event.axisName == nc::AXIS_LY)
+	if (event.axisName == nc::AxisName::LY)
 		joyAxisValue_ = event.value;
 }
 
