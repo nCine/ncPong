@@ -46,6 +46,7 @@ endif()
 target_link_libraries(ncpong ${NCINE_LIBRARY})
 
 if(MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 	target_compile_options(ncpong PRIVATE "/wd4251")
 endif()
 
