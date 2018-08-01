@@ -41,6 +41,7 @@ class MyEventHandler :
 	void onMouseButtonPressed(const nc::MouseEvent &event) override;
 	void onMouseMoved(const nc::MouseState &state) override;
 	void onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event) override;
+	void onJoyMappedButtonReleased(const nc::JoyMappedButtonEvent &event) override;
 
   private:
 	nctl::UniquePtr<nc::Texture> megaTexture_;
@@ -67,6 +68,7 @@ class MyEventHandler :
 	nctl::UniquePtr<nc::AudioBufferPlayer> outSound_;
 
 	void kickOff();
+	void reset();
 };
 
 #endif

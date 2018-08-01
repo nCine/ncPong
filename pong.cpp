@@ -24,7 +24,6 @@ const char *FontTextureFile = "DroidSans32_256.png";
 
 const float BallSpeed = 300.0f;
 const float StickSpeed = 100.0f;
-const float LeftStickDeadZone = 7849 / 32767.0f;
 
 }
 
@@ -35,10 +34,6 @@ nc::IAppEventHandler *createAppEventHandler()
 
 void MyEventHandler::onPreInit(nc::AppConfiguration &config)
 {
-	config.enableProfilerGraphs(false);
-	config.enableProfilerText(false);
-	config.enableThreads(false);
-
 	config.setWindowTitle("ncPong");
 #ifdef __ANDROID__
 	config.setDataPath("asset::");
@@ -124,13 +119,13 @@ void MyEventHandler::onFrameStart()
 		targetY_ = blueStick_->y - 1.0f;
 	}
 
-	if (joyAxisValue_ > LeftStickDeadZone)
+	if (joyAxisValue_ > nc::IInputManager::LeftStickDeadZone)
 	{
 		if (shouldKickOff_)
 			kickOff();
 		targetY_ = blueStick_->y + 1.0f;
 	}
-	else if (joyAxisValue_ < -LeftStickDeadZone)
+	else if (joyAxisValue_ < -nc::IInputManager::LeftStickDeadZone)
 	{
 		if (shouldKickOff_)
 			kickOff();
@@ -199,25 +194,15 @@ void MyEventHandler::onFrameStart()
 	{
 		particleSys_->emitParticles(30, 1.0f, ballVelocity_ * 350.0f);
 		outSound_->play();
-		blueStick_->y = nc::theApplication().height() * 0.5f;
-		redStick_->y = nc::theApplication().height() * 0.5f;
-		targetY_ = nc::theApplication().height() * 0.5f;
-		ball_->setPosition(nc::theApplication().width() * 0.5f, nc::theApplication().height() * 0.5f);
-		ballVelocity_.set(0.0f, 0.0f);
 		redScore_++;
-		shouldKickOff_ = true;
+		reset();
 	}
 	else if (ballRect.x + ballRect.w > nc::theApplication().width())
 	{
 		particleSys_->emitParticles(30, 1.0f, ballVelocity_ * 350.0f);
 		outSound_->play();
-		blueStick_->y = nc::theApplication().height() * 0.5f;
-		redStick_->y = nc::theApplication().height() * 0.5f;
-		targetY_ = nc::theApplication().height() * 0.5f;
-		ball_->setPosition(nc::theApplication().width() * 0.5f, nc::theApplication().height() * 0.5f);
-		ballVelocity_.set(0.0f, 0.0f);
 		blueScore_++;
-		shouldKickOff_ = true;
+		reset();
 	}
 
 	// Score texts
@@ -250,13 +235,13 @@ void MyEventHandler::onTouchMove(const nc::TouchEvent &event)
 void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 {
 #ifdef __ANDROID__
-	if (event.sym == nc::KEY_VOLUME_UP || event.sym == nc::KEY_VOLUME_DOWN)
+	if (event.sym == nc::KeySym::VOLUME_UP || event.sym == nc::KeySym::VOLUME_DOWN)
 	{
 		float volume = nc::theServiceLocator().audioDevice().gain();
 
-		if (event.sym == nc::KEY_VOLUME_UP && volume <= 0.9f)
+		if (event.sym == nc::KeySym::VOLUME_UP && volume <= 0.9f)
 			volume += 0.1f;
-		else if (event.sym == nc::KEY_VOLUME_DOWN && volume >= 0.1f)
+		else if (event.sym == nc::KeySym::VOLUME_DOWN && volume >= 0.1f)
 			volume -= 0.1f;
 
 		nc::theServiceLocator().audioDevice().setGain(volume);
@@ -267,6 +252,12 @@ void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 		nc::theApplication().quit();
 	else if (event.sym == nc::KeySym::SPACE)
 		nc::theApplication().togglePause();
+	else if (event.sym == nc::KeySym::R)
+	{
+		redScore_ = 0;
+		blueScore_ = 0;
+		reset();
+	}
 }
 
 void MyEventHandler::onMouseButtonPressed(const nc::MouseEvent &event)
@@ -290,6 +281,18 @@ void MyEventHandler::onJoyMappedAxisMoved(const nc::JoyMappedAxisEvent &event)
 		joyAxisValue_ = event.value;
 }
 
+void MyEventHandler::onJoyMappedButtonReleased(const nc::JoyMappedButtonEvent &event)
+{
+	if (event.buttonName == nc::ButtonName::START)
+	{
+		redScore_ = 0;
+		blueScore_ = 0;
+		reset();
+	}
+	else if (event.buttonName == nc::ButtonName::GUIDE)
+		nc::theApplication().quit();
+}
+
 void MyEventHandler::kickOff()
 {
 	shouldKickOff_ = false;
@@ -298,4 +301,14 @@ void MyEventHandler::kickOff()
 		ballVelocity_.set(-1.0f, 0.0f);
 	else
 		ballVelocity_.set(1.0f, 0.0f);
+}
+
+void MyEventHandler::reset()
+{
+	blueStick_->y = nc::theApplication().height() * 0.5f;
+	redStick_->y = nc::theApplication().height() * 0.5f;
+	targetY_ = nc::theApplication().height() * 0.5f;
+	ball_->setPosition(nc::theApplication().width() * 0.5f, nc::theApplication().height() * 0.5f);
+	ballVelocity_.set(0.0f, 0.0f);
+	shouldKickOff_ = true;
 }
