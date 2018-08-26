@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "TextNode.h"
 #include "ParticleSystem.h"
+#include "ParticleInitializer.h"
 #include "AudioBuffer.h"
 #include "AudioBufferPlayer.h"
 #include "IFile.h" // for dataPath()
@@ -95,8 +96,8 @@ void MyEventHandler::onInit()
 
 	particleSys_ = nctl::makeUnique<nc::ParticleSystem>(ball_.get(), 50, megaTexture_.get(), particleRect);
 	nctl::UniquePtr<nc::ColorAffector> colAffector = nctl::makeUnique<nc::ColorAffector>();
-	colAffector->addColorStep(0.0f, nc::Color(255U, 255U, 255U, 0U));
-	colAffector->addColorStep(1.0f, nc::Color(255U, 255U, 255U, 255U));
+	colAffector->addColorStep(0.0f, nc::Colorf(1.0f, 1.0f, 1.0f, 1.0f));
+	colAffector->addColorStep(1.0f, nc::Colorf(1.0f, 1.0f, 1.0f, 0.0f));
 	particleSys_->addAffector(nctl::move(colAffector));
 }
 
@@ -148,6 +149,12 @@ void MyEventHandler::onFrameStart()
 	ball_->x += ballVelocity_.x * BallSpeed * step;
 	ball_->y += ballVelocity_.y * BallSpeed * step;
 
+	nc::ParticleInitializer particleInit;
+	particleInit.setAmount(10);
+	particleInit.setLife(0.2f, 0.25f);
+	particleInit.setPositionAndRadius(0.0f, 0.0f, 10.0f);
+	particleInit.setVelocityAndAngle(ballVelocity_ * 250.0f, 45.0f);
+
 	// Checking for ball and sticks collisions
 	const nc::Rectf ballRect = nc::Rectf::fromCenterAndSize(ball_->position(), ball_->size());
 	const nc::Rectf blueRect = nc::Rectf::fromCenterAndSize(blueStick_->position(), blueStick_->size());
@@ -156,7 +163,7 @@ void MyEventHandler::onFrameStart()
 	    ballRect.y + ballRect.h >= blueRect.y &&
 	    ballRect.y <= blueRect.y + blueRect.h)
 	{
-		particleSys_->emitParticles(10, 0.25f, ballVelocity_ * 250.0f);
+		particleSys_->emitParticles(particleInit);
 		ball_->x = blueRect.x + blueRect.w + ballRect.w;
 		ballVelocity_.x *= -1.0f;
 		ballVelocity_.y = -1.0f * ((blueStick_->y - ball_->y) / blueRect.h);
@@ -166,7 +173,7 @@ void MyEventHandler::onFrameStart()
 	         ballRect.y + ballRect.h >= redRect.y &&
 	         ballRect.y <= redRect.y + redRect.h)
 	{
-		particleSys_->emitParticles(10, 0.25f, ballVelocity_ * 250.0f);
+		particleSys_->emitParticles(particleInit);
 		ball_->x = redRect.x - ballRect.w;
 		ballVelocity_.x *= -1.0f;
 		ballVelocity_.y = -1.0f * ((redStick_->y - ball_->y) / redRect.h);
@@ -176,14 +183,14 @@ void MyEventHandler::onFrameStart()
 	// Ball collision with top or bottom
 	if (ballRect.y + ballRect.h > nc::theApplication().height())
 	{
-		particleSys_->emitParticles(10, 0.2f, ballVelocity_ * 250.0f);
+		particleSys_->emitParticles(particleInit);
 		ball_->y = nc::theApplication().height() - ballRect.h * 0.5f;
 		ballVelocity_.y *= -1.0f;
 		tickSound_->play();
 	}
 	else if (ballRect.y < 0)
 	{
-		particleSys_->emitParticles(10, 0.2f, ballVelocity_ * 250.0f);
+		particleSys_->emitParticles(particleInit);
 		ball_->y = ballRect.h * 0.5f;
 		ballVelocity_.y *= -1.0f;
 		tickSound_->play();
@@ -192,14 +199,14 @@ void MyEventHandler::onFrameStart()
 	// Scoring
 	if (ballRect.x <= 0)
 	{
-		particleSys_->emitParticles(30, 1.0f, ballVelocity_ * 350.0f);
+		particleSys_->emitParticles(particleInit);
 		outSound_->play();
 		redScore_++;
 		reset();
 	}
 	else if (ballRect.x + ballRect.w > nc::theApplication().width())
 	{
-		particleSys_->emitParticles(30, 1.0f, ballVelocity_ * 350.0f);
+		particleSys_->emitParticles(particleInit);
 		outSound_->play();
 		blueScore_++;
 		reset();
