@@ -40,7 +40,7 @@ android {
 		}
 	}
 
-	final def cmakeBuildDir = new File(project.buildDir, "ncpong")
+	final def cmakeBuildDir = new File(project.buildDir, "@PACKAGE_LOWER_NAME@")
 	final def architectures = ['@GRADLE_NDK_ARCHITECTURES@']
 
 	def cmakeBuildTasks = []

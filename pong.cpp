@@ -39,8 +39,8 @@ void MyEventHandler::onPreInit(nc::AppConfiguration &config)
 #ifdef __ANDROID__
 	config.setDataPath("asset::");
 #else
-	#ifdef NCPONG_DEFAULT_DATA_DIR
-	config.setDataPath(NCPONG_DEFAULT_DATA_DIR);
+	#ifdef PACKAGE_DEFAULT_DATA_DIR
+	config.setDataPath(PACKAGE_DEFAULT_DATA_DIR);
 	#else
 	config.setDataPath("data/");
 	#endif

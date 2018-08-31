@@ -57,7 +57,7 @@ message(STATUS "nCine library: ${NCINE_LIBRARY}")
 message(STATUS "nCine include directory: ${NCINE_INCLUDE_DIR}")
 message(STATUS "nCine main.cpp: ${NCINE_MAIN_CPP}")
 
-if(NCPONG_BUILD_ANDROID)
+if(PACKAGE_BUILD_ANDROID)
 	if(IS_DIRECTORY ${NCINE_ANDROID_DIR})
 		message(STATUS "nCine Android directory: ${NCINE_ANDROID_DIR}")
 	else()
