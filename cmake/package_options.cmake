@@ -4,7 +4,7 @@ set(PACKAGE_DATA_DIR "${PARENT_SOURCE_DIR}/${PACKAGE_NAME}-data" CACHE PATH "Set
 
 if(PACKAGE_BUILD_ANDROID)
 	set(NDK_DIR "" CACHE PATH "Set the path to the Android NDK")
-	set(PACKAGE_NDK_ARCHITECTURES armeabi-v7a CACHE STRING "Set the NDK target architectures")
+	set(PACKAGE_NDK_ARCHITECTURES arm64-v8a CACHE STRING "Set the NDK target architectures")
 	option(PACKAGE_ASSEMBLE_APK "Assemble the Android APK of the game with Gradle" OFF)
 endif()
 
