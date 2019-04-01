@@ -89,7 +89,7 @@ void MyEventHandler::onInit()
 	redScore_ = 0;
 	redScoreText_ = nctl::makeUnique<nc::TextNode>(dummy_.get(), font_.get());
 	redScoreText_->setColor(170, 135, 181, 225);
-	redScoreText_->setAlignment(nc::TextNode:: Alignment::LEFT);
+	redScoreText_->setAlignment(nc::TextNode::Alignment::LEFT);
 
 	shouldKickOff_ = true;
 	joyAxisValue_ = 0.0f;
@@ -113,7 +113,7 @@ void MyEventHandler::onFrameStart()
 			kickOff();
 		targetY_ = blueStick_->y + 1.0f;
 	}
-	else if (keyState.isKeyDown(nc::KeySym::DOWN)  || keyState.isKeyDown(nc::KeySym::S))
+	else if (keyState.isKeyDown(nc::KeySym::DOWN) || keyState.isKeyDown(nc::KeySym::S))
 	{
 		if (shouldKickOff_)
 			kickOff();
@@ -124,13 +124,13 @@ void MyEventHandler::onFrameStart()
 	{
 		if (shouldKickOff_)
 			kickOff();
-		targetY_ = blueStick_->y + 1.0f;
+		targetY_ = blueStick_->y - 1.0f;
 	}
 	else if (joyAxisValue_ < -nc::IInputManager::LeftStickDeadZone)
 	{
 		if (shouldKickOff_)
 			kickOff();
-		targetY_ = blueStick_->y - 1.0f;
+		targetY_ = blueStick_->y + 1.0f;
 	}
 
 	// Moving the blue stick
@@ -159,7 +159,7 @@ void MyEventHandler::onFrameStart()
 	const nc::Rectf ballRect = nc::Rectf::fromCenterAndSize(ball_->position(), ball_->size());
 	const nc::Rectf blueRect = nc::Rectf::fromCenterAndSize(blueStick_->position(), blueStick_->size());
 	const nc::Rectf redRect = nc::Rectf::fromCenterAndSize(redStick_->position(), redStick_->size());
-	if (ballRect.x <  blueRect.x + blueRect.w &&
+	if (ballRect.x < blueRect.x + blueRect.w &&
 	    ballRect.y + ballRect.h >= blueRect.y &&
 	    ballRect.y <= blueRect.y + blueRect.h)
 	{

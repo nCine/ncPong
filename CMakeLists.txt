@@ -99,3 +99,4 @@ endif()
 
 include(package_copy_targets)
 include(package_build_android)
+include(ncpong_lua)
