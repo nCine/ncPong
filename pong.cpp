@@ -1,17 +1,17 @@
 #include <cmath>
 #include "pong.h"
 
-#include "Application.h"
-#include "AppConfiguration.h"
-#include "SceneNode.h"
-#include "Texture.h"
-#include "Sprite.h"
-#include "TextNode.h"
-#include "ParticleSystem.h"
-#include "ParticleInitializer.h"
-#include "AudioBuffer.h"
-#include "AudioBufferPlayer.h"
-#include "IFile.h" // for dataPath()
+#include <ncine/Application.h>
+#include <ncine/AppConfiguration.h>
+#include <ncine/SceneNode.h>
+#include <ncine/Texture.h>
+#include <ncine/Sprite.h>
+#include <ncine/TextNode.h>
+#include <ncine/ParticleSystem.h>
+#include <ncine/ParticleInitializer.h>
+#include <ncine/AudioBuffer.h>
+#include <ncine/AudioBufferPlayer.h>
+#include <ncine/IFile.h> // for dataPath()
 
 namespace {
 
