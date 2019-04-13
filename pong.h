@@ -51,6 +51,7 @@ class MyEventHandler :
 	nctl::UniquePtr<nc::Sprite> redStick_;
 	nctl::UniquePtr<nc::Sprite> ball_;
 
+	nctl::UniquePtr<nc::TextNode> versionText_;
 	float targetY_;
 	nc::Vector2f ballVelocity_;
 	int blueScore_;

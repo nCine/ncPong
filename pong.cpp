@@ -1,4 +1,5 @@
 #include <cmath>
+#include "version.h"
 #include "pong.h"
 
 #include <ncine/Application.h>
@@ -57,6 +58,19 @@ void MyEventHandler::onInit()
 	                                   (nc::IFile::dataPath() + "DroidSans32_256.fnt").data());
 	tickAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "tick.wav").data());
 	outAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "out.wav").data());
+
+#ifdef NCPONG_DEBUG
+	versionText_ = nctl::makeUnique<nc::TextNode>(&rootNode, font_.get());
+	versionText_->setScale(0.75f);
+	nctl::String versionString(256);
+	#ifdef WITH_GIT_VERSION
+	versionString.format("%s (%s)", VersionStrings::Version, VersionStrings::GitBranch);
+	#else
+	versionString.format("%s at %s", VersionStrings::CompilationDate, VersionStrings::CompilationTime);
+	#endif
+	versionText_->setString(versionString);
+	versionText_->setPosition(versionText_->width() * 0.5f, versionText_->height() * 0.5f + versionText_->fontBase() * 0.25f);
+#endif
 
 	const nc::Recti blueStickRect(24, 22, 54, 212);
 	const nc::Recti redStickRect(174, 22, 56, 212);
