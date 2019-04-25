@@ -271,14 +271,15 @@ if nc.ANDROID then
 	end
 end
 
-	if event.sym == nc.keysym.Q or event.sym == nc.keysym.ESCAPE then
-		nc.application.quit()
-	elseif event.sym == nc.keysym.SPACE then
-		nc.application.toggle_pause()
-	elseif event.sym == nc.keysym.R then
+	if event.sym == nc.keysym.R then
 		red_score_ = 0
 		blue_score_ = 0
 		reset()
+	elseif event.sym == nc.keysym.Q or event.sym == nc.keysym.ESCAPE then
+		nc.application.quit()
+	elseif event.sym == nc.keysym.SPACE then
+		local is_suspended = nc.application.is_suspended()
+		nc.application.set_suspended(not is_suspended)
 	end
 end
 

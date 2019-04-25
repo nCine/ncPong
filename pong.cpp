@@ -36,17 +36,18 @@ nc::IAppEventHandler *createAppEventHandler()
 
 void MyEventHandler::onPreInit(nc::AppConfiguration &config)
 {
-	config.setWindowTitle("ncPong");
 #ifdef __ANDROID__
-	config.setDataPath("asset::");
+	config.dataPath() = "asset::";
 #else
 	#ifdef PACKAGE_DEFAULT_DATA_DIR
-	config.setDataPath(PACKAGE_DEFAULT_DATA_DIR);
+	config.dataPath() = PACKAGE_DEFAULT_DATA_DIR;
 	#else
-	config.setDataPath("data/");
+	config.dataPath() = "data/";
 	#endif
 #endif
-	config.setWindowIconFilename("icon48.png");
+
+	config.windowTitle = "ncPong";
+	config.windowIconFilename = "icon48.png";
 }
 
 void MyEventHandler::onInit()
@@ -269,15 +270,18 @@ void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 	}
 	else
 #endif
-	if (event.sym == nc::KeySym::ESCAPE || event.sym == nc::KeySym::Q)
-		nc::theApplication().quit();
-	else if (event.sym == nc::KeySym::SPACE)
-		nc::theApplication().togglePause();
-	else if (event.sym == nc::KeySym::R)
+	if (event.sym == nc::KeySym::R)
 	{
 		redScore_ = 0;
 		blueScore_ = 0;
 		reset();
+	}
+	else if (event.sym == nc::KeySym::ESCAPE || event.sym == nc::KeySym::Q)
+		nc::theApplication().quit();
+	else if (event.sym == nc::KeySym::SPACE)
+	{
+		const bool isSuspended = nc::theApplication().isSuspended();
+		nc::theApplication().setSuspended(!isSuspended);
 	}
 }
 
