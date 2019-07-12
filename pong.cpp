@@ -36,8 +36,10 @@ nc::IAppEventHandler *createAppEventHandler()
 
 void MyEventHandler::onPreInit(nc::AppConfiguration &config)
 {
-#ifdef __ANDROID__
+#if defined(__ANDROID__)
 	config.dataPath() = "asset::";
+#elif defined(__EMSCRIPTEN__)
+	config.dataPath() = "/";
 #else
 	#ifdef PACKAGE_DEFAULT_DATA_DIR
 	config.dataPath() = PACKAGE_DEFAULT_DATA_DIR;
