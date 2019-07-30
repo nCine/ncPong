@@ -1,10 +1,9 @@
 set(PACKAGE_NAME "ncPong")
 set(PACKAGE_EXE_NAME "ncpong")
-set(PACKAGE_ICON_NAME ${PACKAGE_NAME})
+set(PACKAGE_VENDOR "Angelo Theodorou")
 set(PACKAGE_DESCRIPTION "An example game made with the nCine")
-set(PACKAGE_AUTHOR_MAIL "encelo@gmail.com")
-set(PACKAGE_DESKTOP_FILE "io.github.ncine.ncpong.desktop")
-set(PACKAGE_JAVA_URL "io/github/ncine/ncpong")
+set(PACKAGE_HOMEPAGE "https://ncine.github.io")
+set(PACKAGE_REVERSE_DNS "io.github.ncine.ncpong")
 
 set(PACKAGE_SOURCES
 	pong.h
@@ -18,3 +17,9 @@ set(PACKAGE_ANDROID_ASSETS
 	android/DroidSans32_256.webp
 	android/sticks_256.webp
 )
+
+function(callback_end)
+	if(NOT EMSCRIPTEN)
+		include(ncpong_lua)
+	endif()
+endfunction()
