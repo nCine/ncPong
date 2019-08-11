@@ -57,8 +57,8 @@ void MyEventHandler::onInit()
 	nc::SceneNode &rootNode = nc::theApplication().rootNode();
 
 	megaTexture_ = nctl::makeUnique<nc::Texture>((nc::IFile::dataPath() + TextureFile).data());
-	font_ = nctl::makeUnique<nc::Font>((nc::IFile::dataPath() + FontTextureFile).data(),
-	                                   (nc::IFile::dataPath() + "DroidSans32_256.fnt").data());
+	font_ = nctl::makeUnique<nc::Font>((nc::IFile::dataPath() + "DroidSans32_256.fnt").data(),
+	                                   (nc::IFile::dataPath() + FontTextureFile).data());
 	tickAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "tick.wav").data());
 	outAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "out.wav").data());
 

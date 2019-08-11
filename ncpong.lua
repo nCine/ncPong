@@ -49,8 +49,8 @@ function ncine.on_init()
 	screen_ = nc.application.screen_dimensions()
 
 	mega_texture_ = nc.texture.new(nc.application.datapath()..texture_file)
-	font_ = nc.font.new(nc.application.datapath()..font_tex_file,
-	                    nc.application.datapath().."DroidSans32_256.fnt")
+	font_ = nc.font.new(nc.application.datapath().."DroidSans32_256.fnt",
+	                    nc.application.datapath()..font_tex_file)
 
 	tick_audio_ = nc.audiobuffer.new(nc.application.datapath().."tick.wav")
 	out_audio_ = nc.audiobuffer.new(nc.application.datapath().."out.wav")
