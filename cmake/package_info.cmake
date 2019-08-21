@@ -19,7 +19,7 @@ set(PACKAGE_ANDROID_ASSETS
 )
 
 function(callback_end)
-	if(NOT EMSCRIPTEN)
+	if(NOT EMSCRIPTEN AND NOT ANDROID)
 		include(ncpong_lua)
 	endif()
 endfunction()
