@@ -12,7 +12,7 @@
 #include <ncine/ParticleInitializer.h>
 #include <ncine/AudioBuffer.h>
 #include <ncine/AudioBufferPlayer.h>
-#include <ncine/IFile.h> // for dataPath()
+#include <ncine/FileSystem.h>
 
 namespace {
 
@@ -56,11 +56,11 @@ void MyEventHandler::onInit()
 {
 	nc::SceneNode &rootNode = nc::theApplication().rootNode();
 
-	megaTexture_ = nctl::makeUnique<nc::Texture>((nc::IFile::dataPath() + TextureFile).data());
-	font_ = nctl::makeUnique<nc::Font>((nc::IFile::dataPath() + "DroidSans32_256.fnt").data(),
-	                                   (nc::IFile::dataPath() + FontTextureFile).data());
-	tickAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "tick.wav").data());
-	outAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>((nc::IFile::dataPath() + "out.wav").data());
+	megaTexture_ = nctl::makeUnique<nc::Texture>(nc::fs::joinPath(nc::fs::dataPath(), TextureFile).data());
+	font_ = nctl::makeUnique<nc::Font>(nc::fs::joinPath(nc::fs::dataPath(), "DroidSans32_256.fnt").data(),
+	                                   nc::fs::joinPath(nc::fs::dataPath(), FontTextureFile).data());
+	tickAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>(nc::fs::joinPath(nc::fs::dataPath(), "tick.wav").data());
+	outAudioBuffer_ = nctl::makeUnique<nc::AudioBuffer>(nc::fs::joinPath(nc::fs::dataPath(), "out.wav").data());
 
 #ifdef NCPONG_DEBUG
 	versionText_ = nctl::makeUnique<nc::TextNode>(&rootNode, font_.get());
