@@ -72,7 +72,7 @@ void MyEventHandler::onInit()
 	versionString.format("%s at %s", VersionStrings::CompilationDate, VersionStrings::CompilationTime);
 	#endif
 	versionText_->setString(versionString);
-	versionText_->setPosition(versionText_->width() * 0.5f, versionText_->height() * 0.5f + versionText_->fontBase() * 0.25f);
+	versionText_->setPosition(versionText_->width() * 0.5f, versionText_->height() * 0.5f + versionText_->lineHeight() * 0.25f);
 #endif
 
 	const nc::Recti blueStickRect(24, 22, 54, 212);
