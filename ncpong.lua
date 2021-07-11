@@ -33,8 +33,8 @@ function ncine.on_pre_init(cfg)
 if nc.ANDROID then
 	cfg.data_path = "asset::"
 else
-	data_dir = "@PACKAGE_DEFAULT_DATA_DIR@"
-	if data_dir == "@".."PACKAGE_DEFAULT_DATA_DIR".."@" then
+	data_dir = "@NCPROJECT_DEFAULT_DATA_DIR@"
+	if data_dir == "@".."NCPROJECT_DEFAULT_DATA_DIR".."@" then
 		data_dir = "data/"
 	end
 	cfg.data_path = data_dir
