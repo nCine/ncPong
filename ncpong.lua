@@ -153,10 +153,19 @@ function ncine.on_frame_start()
 	ball_pos.x = ball_pos.x + ball_velocity_.x * BallSpeed * step
 	ball_pos.y = ball_pos.y + ball_velocity_.y * BallSpeed * step
 
+	-- Ensure that the minimum particle velocity is always smaller than the maximum one
+	min_particle_vel_x = ball_velocity_.x * 200
+	max_particle_vel_x = ball_velocity_.x * 250
+	if ball_velocity_.x < 0 then
+		temp = min_particle_vel_x
+		min_particle_vel_x = max_particle_vel_x
+		max_particle_vel_x = min_particle_vel_x
+	end
+
 	local init_particles = {
 		amount = 10, life = {0.2, 0.25},
 		position = {{x = -10, y = -10}, {x = 10, y = 10}},
-		velocity = {{x = ball_velocity_.x * 200, y = -10}, {x = ball_velocity_.x * 250, y = 10}}
+		velocity = {{x = min_particle_vel_x, y = -10}, {x = max_particle_vel_x, y = 10}}
 	}
 
 	-- Checking for ball and sticks collisions
