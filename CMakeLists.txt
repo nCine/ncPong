@@ -1,7 +1,7 @@
 set(NCPROJECT_NAME "ncPong")
 set(NCPROJECT_EXE_NAME "ncpong")
 set(NCPROJECT_VENDOR "Angelo Theodorou")
-set(NCPROJECT_COPYRIGHT "Copyright ©2011-2021 ${NCPROJECT_VENDOR}")
+set(NCPROJECT_COPYRIGHT "Copyright ©2011-2022 ${NCPROJECT_VENDOR}")
 set(NCPROJECT_DESCRIPTION "An example game made with the nCine")
 set(NCPROJECT_HOMEPAGE "https://ncine.github.io")
 set(NCPROJECT_REVERSE_DNS "io.github.ncine.ncpong")

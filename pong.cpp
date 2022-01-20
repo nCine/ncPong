@@ -95,7 +95,7 @@ void MyEventHandler::onInit()
 	ball_->setTexRect(ballRect);
 	ball_->setScale(0.5f);
 
-	targetY_ = blueStick_->y;
+	targetY_ = blueStick_->position().y;
 	ballVelocity_.set(0.0f, 0.0f);
 
 	blueScore_ = 0;
@@ -128,43 +128,43 @@ void MyEventHandler::onFrameStart()
 	{
 		if (shouldKickOff_)
 			kickOff();
-		targetY_ = blueStick_->y + 1.0f;
+		targetY_ = blueStick_->position().y + 1.0f;
 	}
 	else if (keyState.isKeyDown(nc::KeySym::DOWN) || keyState.isKeyDown(nc::KeySym::S))
 	{
 		if (shouldKickOff_)
 			kickOff();
-		targetY_ = blueStick_->y - 1.0f;
+		targetY_ = blueStick_->position().y - 1.0f;
 	}
 
 	if (joyAxisValue_ > nc::IInputManager::LeftStickDeadZone)
 	{
 		if (shouldKickOff_)
 			kickOff();
-		targetY_ = blueStick_->y - 1.0f;
+		targetY_ = blueStick_->position().y - 1.0f;
 	}
 	else if (joyAxisValue_ < -nc::IInputManager::LeftStickDeadZone)
 	{
 		if (shouldKickOff_)
 			kickOff();
-		targetY_ = blueStick_->y + 1.0f;
+		targetY_ = blueStick_->position().y + 1.0f;
 	}
 
 	// Moving the blue stick
-	if (blueStick_->y > targetY_ + 0.5f)
-		blueStick_->y -= StickSpeed * step;
-	else if (blueStick_->y < targetY_ - 0.5f)
-		blueStick_->y += StickSpeed * step;
+	if (blueStick_->position().y > targetY_ + 0.5f)
+		blueStick_->moveY(-StickSpeed * step);
+	else if (blueStick_->position().y < targetY_ - 0.5f)
+		blueStick_->moveY(StickSpeed * step);
 
 	// Moving the red stick
-	if (redStick_->y > ball_->y + 0.5f)
-		redStick_->y -= StickSpeed * step;
-	else if (redStick_->y < ball_->y - 0.5f)
-		redStick_->y += StickSpeed * step;
+	if (redStick_->position().y > ball_->position().y + 0.5f)
+		redStick_->moveY(-StickSpeed * step);
+	else if (redStick_->position().y < ball_->position().y - 0.5f)
+		redStick_->moveY(StickSpeed * step);
 
 	// Moving the ball
-	ball_->x += ballVelocity_.x * BallSpeed * step;
-	ball_->y += ballVelocity_.y * BallSpeed * step;
+	ball_->moveX(ballVelocity_.x * BallSpeed * step);
+	ball_->moveY(ballVelocity_.y * BallSpeed * step);
 
 	nc::ParticleInitializer particleInit;
 	particleInit.setAmount(10);
@@ -173,17 +173,17 @@ void MyEventHandler::onFrameStart()
 	particleInit.setVelocityAndAngle(ballVelocity_ * 250.0f, 45.0f);
 
 	// Checking for ball and sticks collisions
-	const nc::Rectf ballRect = nc::Rectf::fromCenterAndSize(ball_->position(), ball_->size());
-	const nc::Rectf blueRect = nc::Rectf::fromCenterAndSize(blueStick_->position(), blueStick_->size());
-	const nc::Rectf redRect = nc::Rectf::fromCenterAndSize(redStick_->position(), redStick_->size());
+	const nc::Rectf ballRect = nc::Rectf::fromCenterSize(ball_->position(), ball_->size());
+	const nc::Rectf blueRect = nc::Rectf::fromCenterSize(blueStick_->position(), blueStick_->size());
+	const nc::Rectf redRect = nc::Rectf::fromCenterSize(redStick_->position(), redStick_->size());
 	if (ballRect.x < blueRect.x + blueRect.w &&
 	    ballRect.y + ballRect.h >= blueRect.y &&
 	    ballRect.y <= blueRect.y + blueRect.h)
 	{
 		particleSys_->emitParticles(particleInit);
-		ball_->x = blueRect.x + blueRect.w + ballRect.w;
+		ball_->setPositionX(blueRect.x + blueRect.w + ballRect.w);
 		ballVelocity_.x *= -1.0f;
-		ballVelocity_.y = -1.0f * ((blueStick_->y - ball_->y) / blueRect.h);
+		ballVelocity_.y = -1.0f * ((blueStick_->position().y - ball_->position().y) / blueRect.h);
 		tickSound_->play();
 	}
 	else if (ballRect.x + ballRect.w > redRect.x &&
@@ -191,9 +191,9 @@ void MyEventHandler::onFrameStart()
 	         ballRect.y <= redRect.y + redRect.h)
 	{
 		particleSys_->emitParticles(particleInit);
-		ball_->x = redRect.x - ballRect.w;
+		ball_->setPositionX(redRect.x - ballRect.w);
 		ballVelocity_.x *= -1.0f;
-		ballVelocity_.y = -1.0f * ((redStick_->y - ball_->y) / redRect.h);
+		ballVelocity_.y = -1.0f * ((redStick_->position().y - ball_->position().y) / redRect.h);
 		tickSound_->play();
 	}
 
@@ -201,14 +201,14 @@ void MyEventHandler::onFrameStart()
 	if (ballRect.y + ballRect.h > nc::theApplication().height())
 	{
 		particleSys_->emitParticles(particleInit);
-		ball_->y = nc::theApplication().height() - ballRect.h * 0.5f;
+		ball_->setPositionY(nc::theApplication().height() - ballRect.h * 0.5f);
 		ballVelocity_.y *= -1.0f;
 		tickSound_->play();
 	}
 	else if (ballRect.y < 0)
 	{
 		particleSys_->emitParticles(particleInit);
-		ball_->y = ballRect.h * 0.5f;
+		ball_->setPositionY(ballRect.h * 0.5f);
 		ballVelocity_.y *= -1.0f;
 		tickSound_->play();
 	}
@@ -332,8 +332,8 @@ void MyEventHandler::kickOff()
 
 void MyEventHandler::reset()
 {
-	blueStick_->y = nc::theApplication().height() * 0.5f;
-	redStick_->y = nc::theApplication().height() * 0.5f;
+	blueStick_->setPositionY(nc::theApplication().height() * 0.5f);
+	redStick_->setPositionY(nc::theApplication().height() * 0.5f);
 	targetY_ = nc::theApplication().height() * 0.5f;
 	ball_->setPosition(nc::theApplication().width() * 0.5f, nc::theApplication().height() * 0.5f);
 	ballVelocity_.set(0.0f, 0.0f);
