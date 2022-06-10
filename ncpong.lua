@@ -45,8 +45,8 @@ end
 end
 
 function ncine.on_init()
-	local rootnode = nc.application.rootnode()
-	screen_ = nc.application.screen_dimensions()
+	local rootnode = nc.application.get_rootnode()
+	resolution_ = nc.application.get_resolution()
 
 	mega_texture_ = nc.texture.new(nc.fs.get_datapath()..texture_file)
 	font_ = nc.font.new(nc.fs.get_datapath().."DroidSans32_256.fnt",
@@ -64,13 +64,13 @@ function ncine.on_init()
 	tick_sound_ = nc.audiobuffer_player.new(tick_audio_)
 	out_sound_ = nc.audiobuffer_player.new(out_audio_)
 
-	blue_stick_ = nc.sprite.new(rootnode, mega_texture_, screen_.x * 0.1, screen_.y * 0.5)
+	blue_stick_ = nc.sprite.new(rootnode, mega_texture_, resolution_.x * 0.1, resolution_.y * 0.5)
 	nc.sprite.set_texrect(blue_stick_, blue_stick_rect)
 	nc.sprite.set_size(blue_stick_, stick_size.x, stick_size.y)
-	red_stick_ = nc.sprite.new(rootnode, mega_texture_, screen_.x * 0.9, screen_.y * 0.5)
+	red_stick_ = nc.sprite.new(rootnode, mega_texture_, resolution_.x * 0.9, resolution_.y * 0.5)
 	nc.sprite.set_texrect(red_stick_, red_stick_rect)
 	nc.sprite.set_size(red_stick_, stick_size.x , stick_size.y)
-	ball_ = nc.sprite.new(rootnode, mega_texture_, screen_.x * 0.5, screen_.y * 0.5)
+	ball_ = nc.sprite.new(rootnode, mega_texture_, resolution_.x * 0.5, resolution_.y * 0.5)
 	nc.sprite.set_texrect(ball_, ball_rect)
 	nc.sprite.set_scale(ball_, 0.5)
 
@@ -99,7 +99,7 @@ function ncine.on_init()
 end
 
 function ncine.on_frame_start()
-	local step = nc.application.interval()
+	local step = nc.application.get_interval()
 	local key_state = nc.input.key_state()
 
 	local blue_stick_pos = nc.sprite.get_position(blue_stick_)
@@ -194,9 +194,9 @@ function ncine.on_frame_start()
 	end
 
 	-- Ball collision with top or bottom
-	if ball_rect.y + ball_rect.h > screen_.y then
+	if ball_rect.y + ball_rect.h > resolution_.y then
 		nc.particle_system.emit_particles(particlesys_, init_particles)
-		ball_pos.y = screen_.y - ball_rect.h * 0.5
+		ball_pos.y = resolution_.y - ball_rect.h * 0.5
 		ball_velocity_.y = ball_velocity_.y * -1
 		nc.audiobuffer_player.play(tick_sound_)
 	elseif ball_rect.y < 0 then
@@ -213,7 +213,7 @@ function ncine.on_frame_start()
 		nc.audiobuffer_player.play(out_sound_)
 		red_score_ = red_score_ + 1
 		reset()
-	elseif ball_rect.x + ball_rect.w > screen_.x then
+	elseif ball_rect.x + ball_rect.w > resolution_.x then
 		nc.particle_system.emit_particles(particlesys_, init_particles)
 		nc.audiobuffer_player.play(out_sound_)
 		blue_score_ = blue_score_ + 1
@@ -224,12 +224,12 @@ function ncine.on_frame_start()
 	local blue_score_width = nc.textnode.get_width(blue_score_text_)
 	local blue_score_height = nc.textnode.get_height(blue_score_text_)
 	nc.textnode.set_string(blue_score_text_, "Blue: "..blue_score_)
-	nc.textnode.set_position(blue_score_text_, blue_score_width * 0.5, screen_.y - blue_score_height * 0.5)
+	nc.textnode.set_position(blue_score_text_, blue_score_width * 0.5, resolution_.y - blue_score_height * 0.5)
 
 	local red_score_width = nc.textnode.get_width(red_score_text_)
 	local red_score_height = nc.textnode.get_height(red_score_text_)
 	nc.textnode.set_string(red_score_text_, "Red: "..red_score_)
-	nc.textnode.set_position(red_score_text_, screen_.x - red_score_width * 0.5, screen_.y - red_score_height * 0.5)
+	nc.textnode.set_position(red_score_text_, resolution_.x - red_score_width * 0.5, resolution_.y - red_score_height * 0.5)
 end
 
 function ncine.on_shutdown()
@@ -339,12 +339,12 @@ function reset()
 	local blue_stick_pos = nc.sprite.get_position(blue_stick_)
 	local red_stick_pos = nc.sprite.get_position(red_stick_)
 
-	blue_stick_pos.y = screen_.y * 0.5
+	blue_stick_pos.y = resolution_.y * 0.5
 	nc.sprite.set_position(blue_stick_, blue_stick_pos)
-	red_stick_pos.y = screen_.y * 0.5
+	red_stick_pos.y = resolution_.y * 0.5
 	nc.sprite.set_position(red_stick_, red_stick_pos)
-	target_y_ = screen_.y * 0.5
-	nc.sprite.set_position(ball_, screen_.x * 0.5, screen_.y * 0.5)
+	target_y_ = resolution_.y * 0.5
+	nc.sprite.set_position(ball_, resolution_.x * 0.5, resolution_.y * 0.5)
 	ball_velocity_ = {x = 0, y = 0}
 	should_kickoff_ = true
 end
