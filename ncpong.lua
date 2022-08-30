@@ -284,11 +284,8 @@ end
 		red_score_ = 0
 		blue_score_ = 0
 		reset()
-	elseif event.sym == nc.keysym.Q or event.sym == nc.keysym.ESCAPE then
+	elseif event.sym == nc.keysym.ESCAPE then
 		nc.application.quit()
-	elseif event.sym == nc.keysym.SPACE then
-		local is_suspended = nc.application.is_suspended()
-		nc.application.set_suspended(not is_suspended)
 	end
 end
 
