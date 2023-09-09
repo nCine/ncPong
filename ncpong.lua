@@ -48,12 +48,12 @@ function ncine.on_init()
 	local rootnode = nc.application.get_rootnode()
 	resolution_ = nc.application.get_resolution()
 
-	mega_texture_ = nc.texture.new(nc.fs.get_datapath()..texture_file)
-	font_ = nc.font.new(nc.fs.get_datapath().."DroidSans32_256.fnt",
-	                    nc.fs.get_datapath()..font_tex_file)
+	mega_texture_ = nc.texture.new(nc.fs.get_data_path()..texture_file)
+	font_ = nc.font.new(nc.fs.get_data_path().."DroidSans32_256.fnt",
+	                    nc.fs.get_data_path()..font_tex_file)
 
-	tick_audio_ = nc.audiobuffer.new(nc.fs.get_datapath().."tick.wav")
-	out_audio_ = nc.audiobuffer.new(nc.fs.get_datapath().."out.wav")
+	tick_audio_ = nc.audiobuffer.new(nc.fs.get_data_path().."tick.wav")
+	out_audio_ = nc.audiobuffer.new(nc.fs.get_data_path().."out.wav")
 
 	local blue_stick_rect = {x = 24, y = 22, w = 54, h = 212}
 	local red_stick_rect = {x = 174, y = 22, w = 56, h = 212}
