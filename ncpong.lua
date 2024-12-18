@@ -52,8 +52,8 @@ function ncine.on_init()
 	font_ = nc.font.new(nc.fs.get_data_path().."DroidSans32_256.fnt",
 	                    nc.fs.get_data_path()..font_tex_file)
 
-	tick_audio_ = nc.audiobuffer.new(nc.fs.get_data_path().."tick.wav")
-	out_audio_ = nc.audiobuffer.new(nc.fs.get_data_path().."out.wav")
+	tick_audio_ = nc.audio_buffer.new(nc.fs.get_data_path().."tick.wav")
+	out_audio_ = nc.audio_buffer.new(nc.fs.get_data_path().."out.wav")
 
 	local blue_stick_rect = {x = 24, y = 22, w = 54, h = 212}
 	local red_stick_rect = {x = 174, y = 22, w = 56, h = 212}
@@ -61,8 +61,8 @@ function ncine.on_init()
 	local particle_rect = {x = 116, y = 23, w = 23, h = 35}
 	local stick_size = {x = 30, y = 200}
 
-	tick_sound_ = nc.audiobuffer_player.new(tick_audio_)
-	out_sound_ = nc.audiobuffer_player.new(out_audio_)
+	tick_sound_ = nc.audio_buffer_player.new(tick_audio_)
+	out_sound_ = nc.audio_buffer_player.new(out_audio_)
 
 	blue_stick_ = nc.sprite.new(rootnode, mega_texture_, resolution_.x * 0.1, resolution_.y * 0.5)
 	nc.sprite.set_texrect(blue_stick_, blue_stick_rect)
@@ -181,7 +181,7 @@ function ncine.on_frame_start()
 		ball_pos.x = blue_rect.x + blue_rect.w + ball_rect.w
 		ball_velocity_.x = ball_velocity_.x * -1
 		ball_velocity_.y = -1 * ((blue_stick_pos.y - ball_pos.y) / blue_rect.h)
-		nc.audiobuffer_player.play(tick_sound_)
+		nc.audio_buffer_player.play(tick_sound_)
 	elseif (ball_rect.x + ball_rect.w > red_rect.x and
 	        ball_rect.y + ball_rect.h >= red_rect.y and
 	        ball_rect.y <= red_rect.y + red_rect.h)
@@ -190,7 +190,7 @@ function ncine.on_frame_start()
 		ball_pos.x = red_rect.x - ball_rect.w
 		ball_velocity_.x = ball_velocity_.x * -1
 		ball_velocity_.y = -1 * ((red_stick_pos.y - ball_pos.y) / red_rect.h)
-		nc.audiobuffer_player.play(tick_sound_)
+		nc.audio_buffer_player.play(tick_sound_)
 	end
 
 	-- Ball collision with top or bottom
@@ -198,24 +198,24 @@ function ncine.on_frame_start()
 		nc.particle_system.emit_particles(particlesys_, init_particles)
 		ball_pos.y = resolution_.y - ball_rect.h * 0.5
 		ball_velocity_.y = ball_velocity_.y * -1
-		nc.audiobuffer_player.play(tick_sound_)
+		nc.audio_buffer_player.play(tick_sound_)
 	elseif ball_rect.y < 0 then
 		nc.particle_system.emit_particles(particlesys_, init_particles)
 		ball_pos.y = ball_rect.h * 0.5
 		ball_velocity_.y = ball_velocity_.y * -1
-		nc.audiobuffer_player.play(tick_sound_)
+		nc.audio_buffer_player.play(tick_sound_)
 	end
 	nc.sprite.set_position(ball_, ball_pos)
 
 	-- Scoring
 	if ball_rect.x <= 0 then
 		nc.particle_system.emit_particles(particlesys_, init_particles)
-		nc.audiobuffer_player.play(out_sound_)
+		nc.audio_buffer_player.play(out_sound_)
 		red_score_ = red_score_ + 1
 		reset()
 	elseif ball_rect.x + ball_rect.w > resolution_.x then
 		nc.particle_system.emit_particles(particlesys_, init_particles)
-		nc.audiobuffer_player.play(out_sound_)
+		nc.audio_buffer_player.play(out_sound_)
 		blue_score_ = blue_score_ + 1
 		reset()
 	end
@@ -242,10 +242,10 @@ function ncine.on_shutdown()
 	nc.sprite.delete(red_stick_)
 	nc.sprite.delete(blue_stick_)
 
-	nc.audiobuffer_player.delete(out_sound_)
-	nc.audiobuffer_player.delete(tick_sound_)
-	nc.audiobuffer.delete(out_audio_)
-	nc.audiobuffer.delete(tick_audio_)
+	nc.audio_buffer_player.delete(out_sound_)
+	nc.audio_buffer_player.delete(tick_sound_)
+	nc.audio_buffer.delete(out_audio_)
+	nc.audio_buffer.delete(tick_audio_)
 
 	nc.font.delete(font_)
 	nc.texture.delete(mega_texture_)
