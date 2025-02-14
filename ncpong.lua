@@ -109,12 +109,12 @@ function ncine.on_frame_start()
 	local ball_pos = nc.sprite.get_position(ball_)
 	local ball_size = nc.sprite.get_size(ball_)
 
-	if nc.input.key_down(key_state, nc.keysym.UP) or nc.input.key_down(key_state, nc.keysym.W) then
+	if nc.input.is_key_down(key_state, nc.keysym.UP) or nc.input.is_key_down(key_state, nc.keysym.W) then
 		if should_kickoff_ then
 			kickoff()
 		end
 		target_y_ = blue_stick_pos.y + 1
-	elseif nc.input.key_down(key_state, nc.keysym.DOWN) or nc.input.key_down(key_state, nc.keysym.S) then
+	elseif nc.input.is_key_down(key_state, nc.keysym.DOWN) or nc.input.is_key_down(key_state, nc.keysym.S) then
 		if should_kickoff_ then
 			kickoff()
 		end
