@@ -99,7 +99,7 @@ function ncine.on_init()
 end
 
 function ncine.on_frame_start()
-	local step = nc.application.get_interval()
+	local step = nc.application.get_frame_time()
 	local key_state = nc.input.key_state()
 
 	local blue_stick_pos = nc.sprite.get_position(blue_stick_)
@@ -301,7 +301,7 @@ function ncine.on_mouse_button_pressed(event)
 end
 
 function ncine.on_mouse_moved(state)
-	if state.left_pressed then
+	if state.is_left_down then
 		target_y_ = state.y
 	end
 end

@@ -2,6 +2,7 @@
 #include "version.h"
 #include "pong.h"
 
+#include <ncine/InputEvents.h>
 #include <ncine/Application.h>
 #include <ncine/AppConfiguration.h>
 #include <ncine/SceneNode.h>
@@ -120,7 +121,7 @@ void MyEventHandler::onInit()
 
 void MyEventHandler::onFrameStart()
 {
-	const float step = nc::theApplication().interval();
+	const float step = nc::theApplication().frameTime();
 
 	const nc::KeyboardState &keyState = nc::theApplication().inputManager().keyboardState();
 
@@ -284,16 +285,16 @@ void MyEventHandler::onKeyReleased(const nc::KeyboardEvent &event)
 
 void MyEventHandler::onMouseButtonPressed(const nc::MouseEvent &event)
 {
-	if (event.isLeftButton())
+	if (event.button == nc::MouseButton::LEFT)
 		targetY_ = static_cast<float>(event.y);
 
-	if (event.isLeftButton() && shouldKickOff_)
+	if (event.button == nc::MouseButton::LEFT && shouldKickOff_)
 		kickOff();
 }
 
 void MyEventHandler::onMouseMoved(const nc::MouseState &state)
 {
-	if (state.isLeftButtonDown())
+	if (state.isButtonDown(nc::MouseButton::LEFT))
 		targetY_ = static_cast<float>(state.y);
 }
 
